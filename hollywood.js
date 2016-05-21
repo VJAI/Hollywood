@@ -152,8 +152,8 @@ let Hollywood = React.createClass({
   },
 
   updateAR: function() {
-    let carousel = ReactDOM.findDOMNode(this);
-    this.setState({ AR: carousel.clientWidth / carousel.clientHeight });
+    let componentDOM = ReactDOM.findDOMNode(this);
+    this.setState({ AR: componentDOM.clientWidth / componentDOM.clientHeight });
   },
 
   onScreenChange: function(isFullScreen) {

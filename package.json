@@ -1,6 +1,6 @@
 {
   "name": "Hollywood",
-  "description": "An awesome React Carousel Component",
+  "description": "An awesome fullscreen background image carousel component with audio",
   "main": "hollywood.js",
   "devDependencies": {
     "babelify": "^6.3.0",
