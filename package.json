@@ -1,0 +1,16 @@
+{
+  "name": "Hollywood",
+  "description": "An awesome React Carousel Component",
+  "main": "hollywood.js",
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "watchify": "^3.4.0"
+  },
+  "dependencies": {
+    "react": "^0.14.0-rc1",
+    "react-dom": "^0.14.0-rc1"
+  },
+  "scripts": {
+    "start": "watchify index.js -v -t babelify -o bundle.js"
+  }
+}
