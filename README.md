@@ -18,5 +18,5 @@ Please click this [link](http://prideparrot.com/demos/hollywood/index.html).
 
 ## Further Development
 
-Run the `npm start` command when you modify the code. It'll transpile the code using babel and watch for changes.
+Run the `npm install` command to install the required dependencies and then run `npm start` command to babelify and watch for changes.
 
