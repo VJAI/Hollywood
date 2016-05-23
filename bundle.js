@@ -121,7 +121,7 @@ var Hollywood = React.createClass({
     duration: React.PropTypes.number, // duration to stay in a single image (milliseconds)
     transitionDuration: React.PropTypes.number, // animation duration (milliseconds)
     toolbar: React.PropTypes.bool, // show/hide toolbar
-    position: React.PropTypes.oneOf(['cover', 'contain'])
+    bgSize: React.PropTypes.oneOf(['cover', 'contain']) // Equivalent to the CSS3 background-size property
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -129,7 +129,7 @@ var Hollywood = React.createClass({
       duration: 8000,
       transitionDuration: 6000,
       toolbar: true,
-      position: 'cover'
+      bgSize: 'cover'
     };
   },
 
@@ -221,7 +221,7 @@ var Hollywood = React.createClass({
       );
     }
 
-    var picClass = this.posClassMap[this.props.position][this.state.AR > this.state.current.AR],
+    var picClass = this.posClassMap[this.props.bgSize][this.state.AR > this.state.current.AR],
         fadeOutProps = { style: { opacity: 0 }, src: this.state.previous && this.state.previous.src },
         fadeInProps = { style: { opacity: 1 }, src: this.state.current.src },
         oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,

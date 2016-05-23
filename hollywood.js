@@ -94,12 +94,12 @@ let Hollywood = React.createClass({
   mixins: [PreLoader, FullScreen],
 
   propTypes: {
-    pics: React.PropTypes.array.isRequired,     // image array
-    audio: React.PropTypes.string,              // the audio url
-    duration: React.PropTypes.number,           // duration to stay in a single image (milliseconds)
-    transitionDuration: React.PropTypes.number, // animation duration (milliseconds)
-    toolbar: React.PropTypes.bool,              // show/hide toolbar
-    position: React.PropTypes.oneOf(['cover', 'contain'])
+    pics: React.PropTypes.array.isRequired,                 // image array
+    audio: React.PropTypes.string,                          // the audio url
+    duration: React.PropTypes.number,                       // duration to stay in a single image (milliseconds)
+    transitionDuration: React.PropTypes.number,             // animation duration (milliseconds)
+    toolbar: React.PropTypes.bool,                          // show/hide toolbar
+    bgSize: React.PropTypes.oneOf(['cover', 'contain'])     // Equivalent to the CSS3 background-size property
   },
 
   getDefaultProps: function () {
@@ -107,7 +107,7 @@ let Hollywood = React.createClass({
       duration: 8000,
       transitionDuration: 6000,
       toolbar: true,
-      position: 'cover'
+      bgSize: 'cover'
     };
   },
 
@@ -198,7 +198,7 @@ let Hollywood = React.createClass({
              </div>;
     }
 
-    let picClass = this.posClassMap[this.props.position][this.state.AR > this.state.current.AR],
+    let picClass = this.posClassMap[this.props.bgSize][this.state.AR > this.state.current.AR],
         fadeOutProps =  { style : { opacity: 0 }, src: this.state.previous && this.state.previous.src },
         fadeInProps = { style: { opacity: 1 }, src: this.state.current.src },
         oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
