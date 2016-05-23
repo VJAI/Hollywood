@@ -120,18 +120,25 @@ var Hollywood = React.createClass({
     audio: React.PropTypes.string, // the audio url
     duration: React.PropTypes.number, // duration to stay in a single image (milliseconds)
     transitionDuration: React.PropTypes.number, // animation duration (milliseconds)
-    toolbar: React.PropTypes.bool
+    toolbar: React.PropTypes.bool, // show/hide toolbar
+    position: React.PropTypes.oneOf(['cover', 'contain'])
   },
 
   getDefaultProps: function getDefaultProps() {
     return {
       duration: 8000,
       transitionDuration: 6000,
-      toolbar: true
+      toolbar: true,
+      position: 'cover'
     };
   },
 
   getInitialState: function getInitialState() {
+    this.posClassMap = {
+      'cover': { 'true': 'w100', 'false': 'h100 ' },
+      'contain': { 'true': 'h100', 'false': 'w100' }
+    };
+
     return {
       previous: null,
       current: null,
@@ -147,7 +154,7 @@ var Hollywood = React.createClass({
     var _this2 = this;
 
     this.updateAR();
-    window.addEventListener("resize", this.updateAR);
+    window.addEventListener('resize', this.updateAR);
 
     // Preload the resources and then start the player and timer.
     this.loadImages(this.props.pics).then(function (images) {
@@ -176,12 +183,12 @@ var Hollywood = React.createClass({
   componentWillUnmount: function componentWillUnmount() {
 
     clearInterval(this.interval);
-    window.removeEventListener("resize", this.updateAR);
+    window.removeEventListener('resize', this.updateAR);
   },
 
   updateAR: function updateAR() {
-    var carousel = ReactDOM.findDOMNode(this);
-    this.setState({ AR: carousel.clientWidth / carousel.clientHeight });
+    var componentDOM = ReactDOM.findDOMNode(this);
+    this.setState({ AR: componentDOM.clientWidth / componentDOM.clientHeight });
   },
 
   onScreenChange: function onScreenChange(isFullScreen) {
@@ -214,12 +221,10 @@ var Hollywood = React.createClass({
       );
     }
 
-    var picClass = this.state.AR > this.state.current.AR ? "w100" : "h100";
-
-    var fadeOutProps = { style: { opacity: 0 }, src: this.state.previous && this.state.previous.src },
-        fadeInProps = { style: { opacity: 1 }, src: this.state.current.src };
-
-    var oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
+    var picClass = this.posClassMap[this.props.position][this.state.AR > this.state.current.AR],
+        fadeOutProps = { style: { opacity: 0 }, src: this.state.previous && this.state.previous.src },
+        fadeInProps = { style: { opacity: 1 }, src: this.state.current.src },
+        oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
         evenProps = this.state.active && (this.state.active === 'even' ? fadeOutProps : fadeInProps);
 
     return React.createElement(
