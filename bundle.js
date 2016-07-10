@@ -9,237 +9,237 @@ var ReactDOM = require('react-dom');
 // -- Utilities --
 // A simple iterator that iterates an array in a circular fashion.
 var Circular = function Circular(arr) {
-  var current = -1;
+	var current = -1;
 
-  return {
-    next: function next() {
-      current = current >= arr.length - 1 ? 0 : current + 1;
-      return arr[current];
-    }
-  };
+	return {
+		next: function next() {
+			current = current >= arr.length - 1 ? 0 : current + 1;
+			return arr[current];
+		}
+	};
 };
 
 // -- Mixins --
 // A mixin that preloads both images and audio resources.
 var PreLoader = {
 
-  loadImages: function loadImages(urls) {
-    return Promise.all(urls.map(function (url) {
-      return new Promise(function (resolve, reject) {
-        var img = new Image();
-        img.onload = function () {
-          return resolve(img);
-        };
-        img.onerror = img.onabort = function () {
-          return reject(url);
-        };
-        img.src = url;
-      });
-    }));
-  },
+	loadImages: function loadImages(urls) {
+		return Promise.all(urls.map(function (url) {
+			return new Promise(function (resolve, reject) {
+				var img = new Image();
+				img.onload = function () {
+					return resolve(img);
+				};
+				img.onerror = img.onabort = function () {
+					return reject(url);
+				};
+				img.src = url;
+			});
+		}));
+	},
 
-  loadAudio: function loadAudio(url) {
-    return new Promise(function (resolve, reject) {
-      var audio = new Audio();
-      audio.oncanplaythrough = function () {
-        return resolve(audio);
-      };
-      audio.onerror = audio.onabort = function (e) {
-        return reject(url);
-      };
-      audio.src = url;
-    });
-  }
+	loadAudio: function loadAudio(url) {
+		return new Promise(function (resolve, reject) {
+			if (!url) return resolve();
+			var audio = new Audio();
+			audio.oncanplaythrough = function () {
+				return resolve(audio);
+			};
+			audio.onerror = audio.onabort = function (e) {
+				return reject(url);
+			};
+			audio.src = url;
+		});
+	}
 };
 
 // A mixin that helps easily to make the document go full-screen by
 // hiding the complexity in handling different vendors.
 var FullScreen = (function () {
-  var d = document,
-      dEl = document.documentElement,
-      event = ['onfullscreenchange', 'onwebkitfullscreenchange', 'onmozfullscreenchange', 'onmsfullscreenchange'].find(function (x) {
-    return d[x] !== undefined;
-  }),
-      prop = ['fullscreenElement', 'webkitFullscreenElement', 'mozFullScreenElement', 'msFullscreenElement'].find(function (x) {
-    return d[x] !== undefined;
-  });
+	var d = document,
+	    dEl = document.documentElement,
+	    event = ['onfullscreenchange', 'onwebkitfullscreenchange', 'onmozfullscreenchange', 'onmsfullscreenchange'].find(function (x) {
+		return d[x] !== undefined;
+	}),
+	    prop = ['fullscreenElement', 'webkitFullscreenElement', 'mozFullScreenElement', 'msFullscreenElement'].find(function (x) {
+		return d[x] !== undefined;
+	});
 
-  dEl.requestFullScreen = dEl.requestFullScreen || dEl.webkitRequestFullscreen || dEl.mozRequestFullScreen || dEl.msRequestFullscreen;
-  d.exitFullscreen = d.exitFullscreen || d.webkitExitFullscreen || d.mozCancelFullScreen || d.msExitFullscreen;
-  d.fullscreenEnabled = d.fullscreenEnabled || d.webkitFullscreenEnabled || d.mozFullScreenEnabled || d.msFullscreenEnabled;
+	dEl.requestFullScreen = dEl.requestFullScreen || dEl.webkitRequestFullscreen || dEl.mozRequestFullScreen || dEl.msRequestFullscreen;
+	d.exitFullscreen = d.exitFullscreen || d.webkitExitFullscreen || d.mozCancelFullScreen || d.msExitFullscreen;
+	d.fullscreenEnabled = d.fullscreenEnabled || d.webkitFullscreenEnabled || d.mozFullScreenEnabled || d.msFullscreenEnabled;
 
-  return {
-    isFullScreenEnabled: d.fullscreenEnabled,
+	return {
+		isFullScreenEnabled: d.fullscreenEnabled,
 
-    goFullScreen: function goFullScreen() {
-      dEl.requestFullScreen();
-      return true;
-    },
+		goFullScreen: function goFullScreen() {
+			dEl.requestFullScreen();
+			return true;
+		},
 
-    exitFullScreen: function exitFullScreen() {
-      d.exitFullscreen();
-      return false;
-    },
+		exitFullScreen: function exitFullScreen() {
+			d.exitFullscreen();
+			return false;
+		},
 
-    componentDidMount: function componentDidMount() {
-      var _this = this;
+		componentDidMount: function componentDidMount() {
+			var _this = this;
 
-      d[event] = function () {
-        return _this.onScreenChange && _this.onScreenChange(d[prop] !== null);
-      };
-    }
-  };
+			d[event] = function () {
+				return _this.onScreenChange && _this.onScreenChange(d[prop] !== null);
+			};
+		}
+	};
 })();
 
 // -- Components --
 // The Picture component
 var Picture = React.createClass({
-  displayName: 'Picture',
+	displayName: 'Picture',
 
-  propTypes: {
-    src: React.PropTypes.string,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    className: React.PropTypes.string,
-    style: React.PropTypes.object
-  },
+	propTypes: {
+		src: React.PropTypes.string,
+		width: React.PropTypes.number,
+		height: React.PropTypes.number,
+		className: React.PropTypes.string,
+		style: React.PropTypes.object
+	},
 
-  render: function render() {
-    return React.createElement('img', this.props);
-  }
+	render: function render() {
+		return React.createElement('img', this.props);
+	}
 });
 
 // The main Carousel component.
 var Hollywood = React.createClass({
-  displayName: 'Hollywood',
+	displayName: 'Hollywood',
 
-  mixins: [PreLoader, FullScreen],
+	mixins: [PreLoader, FullScreen],
 
-  propTypes: {
-    pics: React.PropTypes.array.isRequired, // image array
-    audio: React.PropTypes.string, // the audio url
-    duration: React.PropTypes.number, // duration to stay in a single image (milliseconds)
-    transitionDuration: React.PropTypes.number, // animation duration (milliseconds)
-    toolbar: React.PropTypes.bool, // show/hide toolbar
-    bgSize: React.PropTypes.oneOf(['cover', 'contain']) // Equivalent to the CSS3 background-size property
-  },
+	propTypes: {
+		pics: React.PropTypes.array.isRequired, // image array
+		audio: React.PropTypes.string, // the audio url
+		duration: React.PropTypes.number, // duration to stay in a single image (milliseconds)
+		transitionDuration: React.PropTypes.number, // animation duration (milliseconds)
+		toolbar: React.PropTypes.bool, // show/hide toolbar
+		bgSize: React.PropTypes.oneOf(['cover', 'contain']) // Equivalent to the CSS3 background-size property
+	},
 
-  getDefaultProps: function getDefaultProps() {
-    return {
-      duration: 8000,
-      transitionDuration: 6000,
-      toolbar: true,
-      bgSize: 'cover'
-    };
-  },
+	getDefaultProps: function getDefaultProps() {
+		return {
+			duration: 8000,
+			transitionDuration: 6000,
+			toolbar: true,
+			bgSize: 'cover'
+		};
+	},
 
-  getInitialState: function getInitialState() {
-    this.posClassMap = {
-      'cover': { 'true': 'w100', 'false': 'h100 ' },
-      'contain': { 'true': 'h100', 'false': 'w100' }
-    };
+	getInitialState: function getInitialState() {
+		this.posClassMap = {
+			'cover': { 'true': 'w100', 'false': 'h100 ' },
+			'contain': { 'true': 'h100', 'false': 'w100' }
+		};
 
-    return {
-      previous: null,
-      current: null,
-      active: null,
-      sound: true,
-      fullScreen: false,
-      ready: false,
-      AR: null
-    };
-  },
+		return {
+			previous: null,
+			current: null,
+			active: null,
+			sound: true,
+			fullScreen: false,
+			ready: false,
+			AR: null
+		};
+	},
 
-  componentDidMount: function componentDidMount() {
-    var _this2 = this;
+	componentDidMount: function componentDidMount() {
+		var _this2 = this;
 
-    this.updateAR();
-    window.addEventListener('resize', this.updateAR);
+		if (!this.props.pics.length) return;
 
-    // Preload the resources and then start the player and timer.
-    this.loadImages(this.props.pics).then(function (images) {
-      _this2.images = images.map(function (i) {
-        return { src: i.src, AR: i.width / i.height };
-      });
-      _this2.iterator = Circular(_this2.images);
-      return _this2.props.audio && _this2.loadAudio(_this2.props.audio);
-    }, function () {
-      return alert('Failed to load all images.');
-    }).then(function (audio) {
-      if (_this2.props.pics.length) {
-        if (audio) {
-          _this2.player = audio;
-          _this2.player.loop = true;
-          _this2.player.play();
-        }
-        _this2.setState({ ready: true, current: _this2.iterator.next() });
-        _this2.interval = setInterval(_this2.move, _this2.props.duration);
-      }
-    }, function () {
-      return alert('Failed to load the audio.');
-    });
-  },
+		this.dom = ReactDOM.findDOMNode(this);
+		this.updateAR();
+		window.addEventListener('resize', this.updateAR);
 
-  componentWillUnmount: function componentWillUnmount() {
+		// Preload the resources and then start the player and timer.
+		Promise.all([this.loadImages(this.props.pics), this.loadAudio(this.props.audio)]).then(function (result) {
+			var images = result[0];
+			_this2.images = images.map(function (i) {
+				return { src: i.src, AR: i.width / i.height };
+			});
+			_this2.iterator = Circular(_this2.images);
 
-    clearInterval(this.interval);
-    window.removeEventListener('resize', this.updateAR);
-  },
+			var audio = result[1];
+			if (audio) {
+				_this2.player = audio;
+				_this2.player.loop = true;
+				_this2.player.play();
+			}
+			_this2.setState({ ready: true, current: _this2.iterator.next() });
+			_this2.interval = setInterval(_this2.move, _this2.props.duration);
+		}, function () {
+			return alert('Failed to load the resources.');
+		});
+	},
 
-  updateAR: function updateAR() {
-    var componentDOM = ReactDOM.findDOMNode(this);
-    this.setState({ AR: componentDOM.clientWidth / componentDOM.clientHeight });
-  },
+	componentWillUnmount: function componentWillUnmount() {
+		clearInterval(this.interval);
+		window.removeEventListener('resize', this.updateAR);
+	},
 
-  onScreenChange: function onScreenChange(isFullScreen) {
-    this.setState({ fullScreen: isFullScreen });
-  },
+	updateAR: function updateAR() {
+		this.setState({ AR: this.dom.clientWidth / this.dom.clientHeight });
+	},
 
-  move: function move() {
-    this.setState({
-      previous: this.state.current,
-      current: this.iterator.next(),
-      active: this.state.active === 'odd' ? 'even' : 'odd'
-    });
-  },
+	onScreenChange: function onScreenChange(isFullScreen) {
+		this.setState({ fullScreen: isFullScreen });
+	},
 
-  toggleSound: function toggleSound() {
-    this.state.sound ? this.player.pause() : this.player.play();
-    this.setState({ sound: !this.state.sound });
-  },
+	move: function move() {
+		this.setState({
+			previous: this.state.current,
+			current: this.iterator.next(),
+			active: this.state.active === 'odd' ? 'even' : 'odd'
+		});
+	},
 
-  toggleFullScreen: function toggleFullScreen() {
-    this.setState({ fullScreen: this.state.fullScreen ? this.exitFullScreen() : this.goFullScreen() });
-  },
+	toggleSound: function toggleSound() {
+		this.state.sound ? this.player.pause() : this.player.play();
+		this.setState({ sound: !this.state.sound });
+	},
 
-  render: function render() {
-    if (!this.state.ready) {
-      return React.createElement(
-        'div',
-        { className: 'hollywood' },
-        this.props.pics.length && [React.createElement('div', { key: 'loading', className: 'hollywood-loading' }), React.createElement(Picture, { key: 'odd' }), React.createElement(Picture, { key: 'even' })]
-      );
-    }
+	toggleFullScreen: function toggleFullScreen() {
+		this.setState({ fullScreen: this.state.fullScreen ? this.exitFullScreen() : this.goFullScreen() });
+	},
 
-    var picClass = this.posClassMap[this.props.bgSize][this.state.AR > this.state.current.AR],
-        fadeOutProps = { style: { opacity: 0 }, src: this.state.previous && this.state.previous.src },
-        fadeInProps = { style: { opacity: 1 }, src: this.state.current.src },
-        oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
-        evenProps = this.state.active && (this.state.active === 'even' ? fadeOutProps : fadeInProps);
+	render: function render() {
+		if (!this.state.ready) {
+			return React.createElement(
+				'div',
+				{ className: 'hollywood' },
+				this.props.pics.length && [React.createElement('div', { key: 'loading', className: 'hollywood-loading' }), React.createElement(Picture, { key: 'odd' }), React.createElement(Picture, { key: 'even' })]
+			);
+		}
 
-    return React.createElement(
-      'div',
-      { className: 'hollywood' },
-      React.createElement(Picture, _extends({ key: 'odd', className: picClass }, oddProps)),
-      React.createElement(Picture, _extends({ key: 'even', className: picClass }, evenProps)),
-      this.props.toolbar && React.createElement(
-        'div',
-        { className: 'hollywood-toolbar' },
-        this.props.audio && React.createElement('span', { className: 'hollywood-icon-sound-' + this.state.sound, onClick: this.toggleSound }),
-        this.isFullScreenEnabled && React.createElement('span', { className: 'hollywood-icon-fullscreen-' + this.state.fullScreen, onClick: this.toggleFullScreen })
-      )
-    );
-  }
+		var picClass = this.posClassMap[this.props.bgSize][this.state.AR > this.state.current.AR],
+		    fadeOutProps = { style: { opacity: 0 }, src: this.state.previous && this.state.previous.src },
+		    fadeInProps = { style: { opacity: 1 }, src: this.state.current.src },
+		    oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
+		    evenProps = this.state.active && (this.state.active === 'even' ? fadeOutProps : fadeInProps);
+
+		return React.createElement(
+			'div',
+			{ className: 'hollywood' },
+			React.createElement(Picture, _extends({ key: 'odd', className: picClass }, oddProps)),
+			React.createElement(Picture, _extends({ key: 'even', className: picClass }, evenProps)),
+			this.props.toolbar && React.createElement(
+				'div',
+				{ className: 'hollywood-toolbar' },
+				this.props.audio && React.createElement('span', { className: 'hollywood-icon-sound-' + this.state.sound, onClick: this.toggleSound }),
+				this.isFullScreenEnabled && React.createElement('span', { className: 'hollywood-icon-fullscreen-' + this.state.fullScreen,
+					onClick: this.toggleFullScreen })
+			)
+		);
+	}
 });
 
 module.exports = Hollywood;
@@ -1531,6 +1531,31 @@ module.exports = warning;
 // shim for using process in browser
 
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+  try {
+    cachedSetTimeout = setTimeout;
+  } catch (e) {
+    cachedSetTimeout = function () {
+      throw new Error('setTimeout is not defined');
+    }
+  }
+  try {
+    cachedClearTimeout = clearTimeout;
+  } catch (e) {
+    cachedClearTimeout = function () {
+      throw new Error('clearTimeout is not defined');
+    }
+  }
+} ())
 var queue = [];
 var draining = false;
 var currentQueue;
@@ -1555,7 +1580,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = cachedSetTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -1572,7 +1597,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    cachedClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -1584,7 +1609,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        cachedSetTimeout(drainQueue, 0);
     }
 };
 
