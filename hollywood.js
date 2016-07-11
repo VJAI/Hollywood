@@ -133,7 +133,6 @@ const Hollywood = React.createClass({
 
 		if(!this.props.pics.length) return;
 
-		this.dom = ReactDOM.findDOMNode(this);
 		this.updateAR();
 		window.addEventListener('resize', this.updateAR);
 
@@ -163,7 +162,7 @@ const Hollywood = React.createClass({
 	},
 
 	updateAR() {
-		this.setState({AR: this.dom.clientWidth / this.dom.clientHeight});
+		this.setState({AR: window.innerWidth / window.innerHeight});
 	},
 
 	onScreenChange(isFullScreen) {
