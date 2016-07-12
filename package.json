@@ -1,16 +1,42 @@
 {
-  "name": "Hollywood",
+  "name": "hollywood",
+  "version": "0.0.1",
   "description": "An awesome fullscreen background image carousel component with audio",
-  "main": "hollywood.js",
-  "devDependencies": {
-    "babelify": "^6.3.0",
-    "watchify": "^3.4.0"
-  },
-  "dependencies": {
-    "react": "^0.14.0-rc1",
-    "react-dom": "^0.14.0-rc1"
-  },
   "scripts": {
-    "start": "watchify index.js -v -t babelify -o bundle.js"
+    "start": "webpack-dev-server --content-base src --port 8080 --hot --inline && open http://localhost:8080/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VJAI/Hollywood.git"
+  },
+  "author": "Vijaya Anand",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VJAI/Hollywood/issues"
+  },
+  "homepage": "https://github.com/VJAI/Hollywood#readme",
+  "dependencies": {
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-register": "^6.9.0",
+    "css-loader": "^0.23.1",
+    "eslint": "^3.0.1",
+    "eslint-loader": "^1.4.1",
+    "file-loader": "^0.9.0",
+    "html-webpack-plugin": "^2.22.0",
+    "node-sass": "^3.8.0",
+    "open": "0.0.5",
+    "raw-loader": "^0.5.1",
+    "sass-loader": "^4.0.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
   }
 }
