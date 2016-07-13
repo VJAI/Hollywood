@@ -3,34 +3,53 @@ import Circular from '../helpers/Circular';
 import PreLoader from '../helpers/PreLoader';
 import FullScreen from '../helpers/FullScreen';
 import Picture from './Picture';
+import Toolbar from './Toolbar';
 import './Hollywood.scss';
 
 export default class Hollywood extends Component {
 
+  static propTypes = {
+    pics: PropTypes.array.isRequired,
+    audio: PropTypes.string,
+    duration: PropTypes.number,
+    transitionDuration: PropTypes.number,
+    toolbar: PropTypes.bool,
+    bgSize: PropTypes.oneOf(['cover', 'contain'])
+  };
+  
+  static defaultProps = {
+    duration: 8000,
+    transitionDuration: 6000,
+    toolbar: true,
+    bgSize: 'cover'
+  };
+
+  posClassMap = {
+    'cover': {true: 'w100', false: 'h100 '},
+    'contain': {true: 'h100', false: 'w100'}
+  };
+
+  state = {
+    previous: null,
+    current: null,
+    active: null,
+    sound: true,
+    fullScreen: false,
+    ready: false,
+    AR: null
+  };
+  
   constructor(props) {
     super(props);
-
-    this.posClassMap = {
-      'cover': {true: 'w100', false: 'h100 '},
-      'contain': {true: 'h100', false: 'w100'}
-    };
-
-    this.state = {
-      previous: null,
-      current: null,
-      active: null,
-      sound: true,
-      fullScreen: false,
-      ready: false,
-      AR: null
-    };
+    this.toggleSound = this.toggleSound.bind(this);
+    this.toggleFullScreen = this.toggleFullScreen.bind(this);
   }
 
   componentDidMount() {
     if (!this.props.pics.length) return;
 
     this.updateAR();
-    window.addEventListener('resize', this.updateAR);
+    window.addEventListener('resize', this.updateAR.bind(this));
 
     // Preload the resources and then start the player and timer.
     Promise.all([PreLoader.loadImages(this.props.pics), PreLoader.loadAudio(this.props.audio)])
@@ -107,30 +126,13 @@ export default class Hollywood extends Component {
       <Picture key="even" className={picClass} {...evenProps} />
       {
         this.props.toolbar &&
-        <div className="toolbar">
-          {this.props.audio &&
-          <span className={`icon-sound-${this.state.sound}`} onClick={this.toggleSound}></span>}
-          {FullScreen.isFullScreenEnabled &&
-          <span className={`icon-fullscreen-${this.state.fullScreen}`}
-                onClick={this.toggleFullScreen}></span>}
-        </div>
+        <Toolbar isAudioAvailable={this.props.audio ? true : false}
+                 isFullScreenEnabled={FullScreen.isFullScreenEnabled}
+                 sound={this.state.sound}
+                 fullScreen={this.state.fullScreen}
+                 onAudioClick={this.toggleSound}
+                 onFullScreenClick={this.toggleFullScreen} />
       }
     </div>;
   }
 }
-
-Hollywood.propTypes = {
-  pics: PropTypes.array.isRequired,
-  audio: PropTypes.string,
-  duration: PropTypes.number,
-  transitionDuration: PropTypes.number,
-  toolbar: PropTypes.bool,
-  bgSize: PropTypes.oneOf(['cover', 'contain'])
-};
-
-Hollywood.defaultProps = {
-  duration: 8000,
-  transitionDuration: 6000,
-  toolbar: true,
-  bgSize: 'cover'
-};
