@@ -2,7 +2,6 @@
 
 An awesome fullscreen background image carousel component with audio built using ReactJS.
 
-
 ## Example
 
 ```javascript
@@ -16,7 +15,11 @@ ReactDOM.render(<Hollywood pics={pics} audio={audio}/>, document.getElementById(
 
 Please click this [link](http://prideparrot.com/demos/hollywood/index.html).
 
-## Further Development
+## NPM Commands
 
-Run the `npm install` command to install the required dependencies and then run `npm start` command to launch the component in browser.
+`npm install` - To install all the dependencies.
+
+`npm start` - Run this command for development. Launches the component in browser and monitor for changes.
+
+`npm build` - Create minified files for production. 
 
