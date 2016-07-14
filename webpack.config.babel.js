@@ -10,15 +10,15 @@ export default {
   },
   output: {
     path:'./dist',
-    filename: optimizeMinimize ? '[name].min.js' : '[name].js',
+    filename: optimizeMinimize ? 'hollywood.min.js' : 'hollywood.js',
     library: 'Hollywood',
     libraryTarget: 'umd'
   },
   module: {
     loaders: [
-      {test: /\.js$/, loader: "babel-loader", exclude: /node_modules/},
+      {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
       {test: /\.scss$/, loader: 'style!css!sass'},
-      {test: /\.(jpg|png|gif)$/, loader: 'url-loader?limit=12288'}
+      {test: /\.(png|gif)$/, loader: 'url-loader?limit=10000'}
     ]
   },
   externals: [

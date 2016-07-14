@@ -16,7 +16,7 @@ export default class Hollywood extends Component {
     toolbar: PropTypes.bool,
     bgSize: PropTypes.oneOf(['cover', 'contain'])
   };
-  
+
   static defaultProps = {
     duration: 8000,
     transitionDuration: 6000,
@@ -38,7 +38,7 @@ export default class Hollywood extends Component {
     ready: false,
     AR: null
   };
-  
+
   constructor(props) {
     super(props);
     this.toggleSound = this.toggleSound.bind(this);
@@ -107,7 +107,7 @@ export default class Hollywood extends Component {
         {
           this.props.pics.length &&
           [
-            <div key="loading" className="hollywood-loading"/>,
+            <div key="loading" className="loading"/>,
             <Picture key="odd"/>,
             <Picture key="even"/>
           ]
