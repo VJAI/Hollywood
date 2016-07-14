@@ -4,7 +4,7 @@
   "description": "An awesome fullscreen background image carousel component with audio",
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.config.babel.js --content-base test/dev",
-    "build": "webpack && webpack -p"
+    "build": "rimraf dist && webpack && webpack -p"
   },
   "repository": {
     "type": "git",
