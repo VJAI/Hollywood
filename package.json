@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An awesome fullscreen background image carousel component with audio",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.config.babel.js --content-base test/dev",
+    "start": "opener http://localhost:8080/index.html && webpack-dev-server --config webpack.dev.config.babel.js --content-base test/dev",
     "build": "rimraf dist && webpack && webpack -p"
   },
   "repository": {
@@ -38,7 +38,7 @@
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
     "node-sass": "^3.8.0",
-    "open": "0.0.5",
+    "opener": "^1.4.1",
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",

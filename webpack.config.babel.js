@@ -11,7 +11,6 @@ export default {
   output: {
     path:'./dist',
     filename: optimizeMinimize ? 'hollywood.min.js' : 'hollywood.js',
-    library: 'Hollywood',
     libraryTarget: 'umd'
   },
   module: {
