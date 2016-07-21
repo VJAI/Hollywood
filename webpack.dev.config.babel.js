@@ -1,4 +1,5 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import {HotModuleReplacementPlugin} from 'webpack';
 
 export default {
   entry: {app: './test/dev'},
@@ -9,6 +10,6 @@ export default {
       {test: /\.(png|gif)$/, loader: 'url-loader?limit=10000'}
     ]
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [new HotModuleReplacementPlugin(), new HtmlWebpackPlugin()],
   devtool: 'eval-source-map'
 };
