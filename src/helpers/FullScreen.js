@@ -2,7 +2,7 @@
 // handling different vendors.
 export default  (() => {
 	const d = document, dEl = document.documentElement,
-		event = ['onfullscreenchange', 'onwebkitfullscreenchange', 'onmozfullscreenchange', 'onmsfullscreenchange'].find(x => d[x] !== undefined),
+		event = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'msfullscreenchange'].find(x => d['on' + x] !== undefined),
 		prop = ['fullscreenElement', 'webkitFullscreenElement', 'mozFullScreenElement', 'msFullscreenElement'].find(x => d[x] !== undefined);
 
 	dEl.requestFullScreen = dEl.requestFullScreen || dEl.webkitRequestFullscreen || dEl.mozRequestFullScreen || dEl.msRequestFullscreen;
@@ -22,8 +22,16 @@ export default  (() => {
 			return false;
 		},
 
-		componentDidMount() {
-			d[event] = () => this.onScreenChange && this.onScreenChange(d[prop] !== null);
-		}
+		subscribe(onScreenChange) {
+      d.addEventListener(event, onScreenChange);
+		},
+
+    unsubscribe(onScreenChange) {
+      d.removeEventListener(event, onScreenChange);
+    },
+
+    isFullScreen() {
+      return d[prop] !== null;
+    }
 	};
 })();

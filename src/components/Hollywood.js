@@ -43,6 +43,7 @@ export default class Hollywood extends Component {
     super(props);
     this.toggleSound = this.toggleSound.bind(this);
     this.toggleFullScreen = this.toggleFullScreen.bind(this);
+    this.onScreenChange = this.onScreenChange.bind(this);
   }
 
   componentDidMount() {
@@ -66,6 +67,8 @@ export default class Hollywood extends Component {
           this.player.loop = true;
           this.player.play();
         }
+
+        FullScreen.subscribe(this.onScreenChange);
         this.setState({ready: true, current: this.iterator.next()});
         this.interval = setInterval(this.move.bind(this), this.props.duration);
       }, () => alert('Failed to load the resources.'));
@@ -74,14 +77,16 @@ export default class Hollywood extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
     window.removeEventListener('resize', this.updateAR);
+    FullScreen.unsubscribe(this.onScreenChange);
   }
 
   updateAR() {
     this.setState({AR: window.innerWidth / window.innerHeight});
   }
 
-  onScreenChange(isFullScreen) {
-    this.setState({fullScreen: isFullScreen});
+  onScreenChange() {
+    console.log(FullScreen.isFullScreen());
+    this.setState({fullScreen: FullScreen.isFullScreen()});
   }
 
   move() {
