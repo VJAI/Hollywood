@@ -58,7 +58,7 @@ export default class Hollywood extends Component {
         this.images = images.map(i => {
           return {src: i.src, AR: i.width / i.height}
         });
-        this.iterator = Circular(this.images);
+        this.iterator = new Circular(this.images);
 
         const audio = result[1];
         if (audio) {
