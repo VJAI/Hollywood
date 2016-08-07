@@ -1,13 +1,11 @@
 // A simple iterator that iterates an array in a circular fashion.
-export default class Circular {
+export default (arr) => {
+  let current = -1;
 
-  constructor(arr) {
-    this.arr = arr;
-    this.current = -1;
-  }
-
-  next() {
-    this.current = this.current >= this.arr.length - 1 ? 0 : this.current + 1;
-    return this.arr[this.current];
-  }
-}
+  return {
+    next() {
+      current = current >= arr.length - 1 ? 0 : current + 1;
+      return arr[current];
+    }
+  };
+};
