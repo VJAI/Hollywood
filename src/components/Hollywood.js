@@ -18,8 +18,8 @@ export default class Hollywood extends Component {
   };
 
   static defaultProps = {
-    duration: 8000,
-    transitionDuration: 6000,
+    duration: 10000,
+    transitionDuration: 2000,
     toolbar: true,
     bgSize: 'cover'
   };
@@ -122,7 +122,7 @@ export default class Hollywood extends Component {
 
     const picClass = this.posClassMap[this.props.bgSize][this.state.AR > this.state.current.AR],
       fadeOutProps = {style: {opacity: 0}, src: this.state.previous && this.state.previous.src},
-      fadeInProps = {style: {opacity: 1}, src: this.state.current.src},
+      fadeInProps = {style: {opacity: 0.3}, src: this.state.current.src},
       oddProps = this.state.active === 'odd' ? fadeOutProps : fadeInProps,
       evenProps = this.state.active && (this.state.active === 'even' ? fadeOutProps : fadeInProps);
 

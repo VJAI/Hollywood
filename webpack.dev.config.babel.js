@@ -10,6 +10,12 @@ export default {
       {test: /\.(png|gif)$/, loader: 'url-loader?limit=10000'}
     ]
   },
-  plugins: [new HotModuleReplacementPlugin(), new HtmlWebpackPlugin()],
+  plugins: [
+    new HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: "./test/dev/index.html",
+      inject: true
+    })
+  ],
   devtool: 'eval-source-map'
 };
