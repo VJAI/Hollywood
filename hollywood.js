@@ -3,15 +3,15 @@ import './hollywood.scss';
 const Hollywood = (options) => {
   const [W, D, B, H] = [window, document, document.body, Hollywood];
   const {images, audio, stay, duration} = {...options, ...{ stay: 10, transit: 3 }};
-  const [woods, even, odd] = ['div', 'img', 'img'].map(e => D.createElement(e));
+  const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
 
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  woods.appendChild(even);
   woods.appendChild(odd);
+  woods.appendChild(even);
   B.appendChild(woods);
   
-  let previous, current, active, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
+  let current, previous, active, inactive, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
   
   Preload(images, audio).then((result) => {
     const imgs = result[0].map(i => {
@@ -33,33 +33,23 @@ const Hollywood = (options) => {
   const move = () => {
     previous = current;
     current = iterator.next();
-    active = active === 'odd' ? 'even' : 'odd';
+    inactive = active;
+    active = active === even ? odd : even;
     
-    const picClass = AR > current.AR ? 'w100' : 'h100',
-      fadeOutProps = {opacity: gloom, src: previous && previous.src},
-      fadeInProps = {opacity: glow, src: current.src},
-      evenProps = active && (active === 'even' ? fadeOutProps : fadeInProps),
-      oddProps = active === 'odd' ? fadeOutProps : fadeInProps;
-    
-    even.classList.add(picClass);
-    if(evenProps.src) even.src = evenProps.src;
-    even.style.opacity = evenProps.opacity;
-    
-    odd.classList.add(picClass);
-    if(oddProps.src) odd.src = oddProps.src;
-    odd.style.opacity = oddProps.opacity;
-  };
-  
-  const paint = () => {
-    
-    
+    active.src = current.src;
+    active.style.opacity = glow;
+    active.className = '';
+    active.classList.add(AR > current.AR ? 'w100' : 'h100');
+    inactive && (inactive.style.opacity = gloom);
   };
   
   H.mute = () => (player.paused ? player.play() : player.pause());
   
   W.addEventListener('resize', () => {
     AR = window.innerWidth / window.innerHeight;
-    
+    odd.className = even.className = '';
+    active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
+    inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
   }, false);
 };
 
