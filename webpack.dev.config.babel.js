@@ -9,6 +9,10 @@ export default {
       {test: /\.scss$/, loader: 'style!css!sass'}
     ]
   },
+  devServer: {
+    inline: true,
+    hot: true
+  },
   plugins: [
     new HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({

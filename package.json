@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An awesome page background image rotator",
   "scripts": {
-    "start": "opener http://localhost:8080/index.html && webpack-dev-server --config webpack.dev.config.babel.js --inline --hot",
+    "start": "opener http://localhost:8080/index.html && webpack-dev-server --config webpack.dev.config.babel.js",
     "build": "webpack && webpack -p "
   },
   "repository": {

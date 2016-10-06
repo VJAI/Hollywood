@@ -2,13 +2,12 @@ import './hollywood.scss';
 
 const Hollywood = (options) => {
   const [W, D, B, H] = [window, document, document.body, Hollywood];
-  const {images, audio, stay, duration} = {...options, ...{ stay: 10, transit: 3 }};
+  const {images, audio, stay, transit} = {...options, ...{ stay: 10, transit: 3 }};
   const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
 
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  woods.appendChild(odd);
-  woods.appendChild(even);
+  [odd, even].map(x => {woods.appendChild(x);x.style.transition = `opacity ${transit}s ease-in`;});
   B.appendChild(woods);
   
   let current, previous, active, inactive, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
