@@ -2,7 +2,7 @@
 
 Isn't it boring to always stare at the same static background image of a website? Well, "Hollywood" is here to get rid of that boredom! It's a simple stand-alone library that periodically changes the background image of the image with a cool animation. It also can play a nice audio in the background to immerse the user into your website!
 
-[Please Check the Demo](http://prideparrot.com/demos/hollywood/.index.html)!
+[Please Check the Demo](http://prideparrot.com/demos/hollywood/index.html)!
 
 ## Installation
 
