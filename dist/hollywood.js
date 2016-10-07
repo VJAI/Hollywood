@@ -80,19 +80,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	__webpack_require__(2);
 
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	var _ref = [window, document, document.body, Promise];
+	var W = _ref[0];
+	var D = _ref[1];
+	var B = _ref[2];
+	var P = _ref[3];
+
+
 	var Hollywood = function Hollywood(options) {
-	  var _ref = [window, document, document.body, Hollywood];
-	  var W = _ref[0];
-	  var D = _ref[1];
-	  var B = _ref[2];
-	  var H = _ref[3];
+	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
 
-	  var _options$stay$transit = _extends({}, options, { stay: 10, transit: 3 });
+	  var images = _stay$transit$loading.images;
+	  var audio = _stay$transit$loading.audio;
+	  var loading = _stay$transit$loading.loading;
+	  var stay = _stay$transit$loading.stay;
+	  var transit = _stay$transit$loading.transit;
 
-	  var images = _options$stay$transit.images;
-	  var audio = _options$stay$transit.audio;
-	  var stay = _options$stay$transit.stay;
-	  var transit = _options$stay$transit.transit;
+	  console.log(loading);
 
 	  var _map = ['div', 'img', 'img'].map(function (e) {
 	    return D.createElement(e);
@@ -107,10 +113,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  B.classList.add('hollywood-on');
 	  woods.classList.add('hollywood');
-	  [odd, even].map(function (x) {
-	    woods.appendChild(x);x.style.transition = 'opacity ' + transit + 's ease-in';
+	  [odd, even].map(function (img) {
+	    woods.appendChild(img);
+	    img.style.transition = 'opacity ' + transit + 's ease-in';
 	  });
 	  B.appendChild(woods);
+
+	  var loadingBar = void 0,
+	      music = void 0,
+	      bars = [];
+
+	  if (loading) {
+	    loadingBar = D.createElement('div');
+	    loadingBar.classList.add('hollywood-loading');
+	    B.appendChild(loadingBar);
+	  }
+
+	  if (audio) {
+	    music = D.createElement('div');
+	    music.classList.add('hollywood-bars', 'hollywood-hidden');
+	    [].concat(_toConsumableArray(Array(5))).map(function (i) {
+	      var bar = D.createElement('div');
+	      bars.push(bar);
+	      music.appendChild(bar);
+	    });
+	    B.appendChild(music);
+
+	    Hollywood.mute = function () {
+	      var paused = void 0;
+	      (paused = player.paused) ? player.play() : player.pause();
+	      bars.map(function (bar) {
+	        return bar.style.animationPlayState = paused ? 'running' : 'paused';
+	      });
+	    };
+
+	    music.addEventListener('click', Hollywood.mute, false);
+	  }
 
 	  var current = void 0,
 	      previous = void 0,
@@ -122,25 +160,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      interval = void 0,
 	      gloom = 0,
 	      glow = 0.5;
-
-	  Preload(images, audio).then(function (result) {
-	    var imgs = result[0].map(function (i) {
-	      return { src: i.src, AR: i.width / i.height };
-	    });
-
-	    iterator = Circular(imgs);
-
-	    if (result[1]) {
-	      player = result[1];
-	      player.loop = true;
-	      player.play();
-	    }
-
-	    move();
-	    interval = W.setInterval(move, stay * 1000);
-	  }).catch(function (err) {
-	    return alert('Can\'t able to preload all resources. ' + err);
-	  });
 
 	  var move = function move() {
 	    previous = current;
@@ -155,22 +174,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    inactive && (inactive.style.opacity = gloom);
 	  };
 
-	  H.mute = function () {
-	    return player.paused ? player.play() : player.pause();
-	  };
-
 	  W.addEventListener('resize', function () {
 	    AR = window.innerWidth / window.innerHeight;
 	    odd.className = even.className = '';
 	    active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
 	    inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
 	  }, false);
+
+	  return new P(function (resolve, reject) {
+	    Preload(images, audio).then(function (result) {
+	      var imgs = result[0].map(function (i) {
+	        return { src: i.src, AR: i.width / i.height };
+	      });
+
+	      iterator = Circular(imgs);
+
+	      if (result[1]) {
+	        player = result[1];
+	        player.loop = true;
+	        player.play();
+	        music.classList.remove('hollywood-hidden');
+	      }
+
+	      loading && loadingBar.classList.add('hollywood-hidden');
+
+	      move();
+	      interval = W.setInterval(move, stay * 1000);
+	      resolve('Hollywood is ON!');
+	    }).catch(function (err) {
+	      reject('Sorry, can\'t able to load all resources. ' + err);
+	    });
+	  });
 	};
 
 	var Preload = function Preload(images, audio) {
-	  var P = Promise;
 	  var promises = [];
-
 
 	  promises.push(P.all(images.map(function (image) {
 	    return new Promise(function (resolve, reject) {
@@ -249,7 +287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000;\n  display: -ms-flexbox;\n  display: flex; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n  .hollywood .toolbar {\n    position: fixed;\n    top: 20px;\n    right: 10px; }\n    .hollywood .toolbar span {\n      display: block;\n      width: 48px;\n      height: 48px;\n      margin-bottom: 10px;\n      transition: opacity 0.5s;\n      opacity: 0.2; }\n    .hollywood .toolbar:hover {\n      opacity: 0.8;\n      cursor: pointer; }\n", ""]);
+	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 1; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n\n.hollywood-bars {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  max-width: 20px;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-align: end;\n      align-items: flex-end;\n  cursor: pointer;\n  z-index: 100; }\n  .hollywood-bars div {\n    width: 3px;\n    height: 40%;\n    background: #666;\n    animation: dance 300ms linear infinite alternate; }\n    .hollywood-bars div:nth-child(1) {\n      animation-delay: 5ms; }\n    .hollywood-bars div:nth-child(2) {\n      animation-delay: 50ms; }\n    .hollywood-bars div:nth-child(3) {\n      animation-delay: 300ms; }\n    .hollywood-bars div:nth-child(4) {\n      animation-delay: 200ms; }\n    .hollywood-bars div:nth-child(5) {\n      animation-delay: 80ms; }\n\n@keyframes dance {\n  0% {\n    height: 40%; }\n  100% {\n    height: 100%; } }\n\n.hollywood-loading {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  border: 3px solid #666;\n  border-right-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  animation: rotate 750ms infinite linear;\n  z-index: 100; }\n\n@keyframes rotate {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(360deg); } }\n\n.hollywood-hidden {\n  display: none; }\n", ""]);
 
 	// exports
 
