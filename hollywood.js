@@ -3,12 +3,22 @@ import './hollywood.scss';
 const Hollywood = (options) => {
   const [W, D, B, H] = [window, document, document.body, Hollywood];
   const {images, audio, stay, transit} = {...options, ...{ stay: 10, transit: 3 }};
-  const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
-
+  const [woods, odd, even, bars, dancingBars = []] = ['div', 'img', 'img', 'div'].map(e => D.createElement(e));
+  
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  [odd, even].map(x => {woods.appendChild(x);x.style.transition = `opacity ${transit}s ease-in`;});
+  bars.classList.add('bars');
+  [odd, even].map(x => {
+    woods.appendChild(x);
+    x.style.transition = `opacity ${transit}s ease-in`;
+  });
+  [...Array(5)].map(i => {
+    let bar = D.createElement('div');
+    dancingBars.push(bar);
+    bars.appendChild(bar);
+  });
   B.appendChild(woods);
+  B.appendChild(bars);
   
   let current, previous, active, inactive, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
   
@@ -42,7 +52,13 @@ const Hollywood = (options) => {
     inactive && (inactive.style.opacity = gloom);
   };
   
-  H.mute = () => (player.paused ? player.play() : player.pause());
+  H.mute = () => {
+    let paused;
+    (paused = player.paused) ? player.play() : player.pause();
+    dancingBars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
+  };
+  
+  bars.addEventListener('click', H.mute, false);
   
   W.addEventListener('resize', () => {
     AR = window.innerWidth / window.innerHeight;
