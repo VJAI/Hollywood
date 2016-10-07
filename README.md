@@ -1,5 +1,41 @@
 # Hollywood
 
-An awesome page background image rotator.
+Isn't it boring to always stare at the same static background image of a website? Well, "Hollywood" is here to get rid of that boredom! It's a simple stand-alone library that periodically changes the background image of the image with a cool animation. It also can play a nice audio in the background to immerse the user into your website!
 
+[Please Check the Demo](http://prideparrot.com/demos/hollywood.index.html)!
 
+## Installation
+
+Hollywood is not yet available in npm repository or bower, but you can install it through npm command by passing the git url as below,
+
+```
+npm install https://github.com/VJAI/Hollywood.git --save
+```
+
+or you can copy the files directly from the `dist` folder and include in your project.
+
+## Usage
+
+You can trigger the show by simply calling the `Hollywood` function passing the URLs of images and an audio (optional).
+
+```javascript
+Hollywood({ images: ['bg1.jpg', 'bg2.jpg', 'bg3.jpg', 'bg4.jpg', 'bg5.jpg'], audio: 'audio.mp3' });
+```
+
+Note, you don't have to worry about pre-loading the images and audio, Hollywood does itself. The `Hollywood` function returns a promise which is resolved once the resources are pre-loaded. It'll display a small loading icon at the bottom right while the resources are getting loaded. 
+
+## Options
+
+`images` - Array of image urls.
+
+`audio` - Audio url.
+
+`loading` - Boolean that specified whether to display the loading icon or not. As default it's `true`. If you want to display your own loading icon then you've to pass this option as `false` and you can resolve the promise returned by the `Hollywood` function to hide your loading icon.
+
+`stay` - The duration of the stay of an image. The default value is 10 seconds.
+
+`transit` - The transition duration between images. The default value is 3 seconds.
+
+## License
+
+MIT

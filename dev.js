@@ -1,6 +1,6 @@
 import Hollywood from './hollywood';
 
-const pics = [...Array(8).keys()].map(x => `http://prideparrot.com/demos/hollywood/assets/pic${x + 1}.jpg`);
-const audio = "http://prideparrot.com/demos/hollywood/assets/theme.mp3";
+const pics = [...Array(8).keys()].map(x => `rez/pic${x + 1}.jpg`);
+const audio = "rez/audio.mp3";
 
 Hollywood({images: pics, audio: audio});

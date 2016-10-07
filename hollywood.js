@@ -3,25 +3,44 @@ import './hollywood.scss';
 const [W, D, B, P] = [window, document, document.body, Promise];
 
 const Hollywood = (options) => {
-  const {images, audio, stay, transit} = {...options, ...{ stay: 10, transit: 3 }};
-  const [woods, odd, even, bars, loading, dancingBars = []] = ['div', 'img', 'img', 'div', 'div'].map(e => D.createElement(e));
+  const {images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options};
+  console.log(loading);
+  const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
   
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  bars.classList.add('hollywood-bars', 'hollywood-hidden');
-  loading.classList.add('hollywood-loading');
-  [odd, even].map(x => {
-    woods.appendChild(x);
-    x.style.transition = `opacity ${transit}s ease-in`;
-  });
-  [...Array(5)].map(i => {
-    let bar = D.createElement('div');
-    dancingBars.push(bar);
-    bars.appendChild(bar);
+  [odd, even].map(img => {
+    woods.appendChild(img);
+    img.style.transition = `opacity ${transit}s ease-in`;
   });
   B.appendChild(woods);
-  B.appendChild(bars);
-  B.appendChild(loading);
+  
+  let loadingBar, music, bars = [];
+  
+  if (loading) {
+    loadingBar = D.createElement('div');
+    loadingBar.classList.add('hollywood-loading');
+    B.appendChild(loadingBar);
+  }
+  
+  if (audio) {
+    music = D.createElement('div');
+    music.classList.add('hollywood-bars', 'hollywood-hidden');
+    [...Array(5)].map(i => {
+      let bar = D.createElement('div');
+      bars.push(bar);
+      music.appendChild(bar);
+    });
+    B.appendChild(music);
+    
+    Hollywood.mute = () => {
+      let paused;
+      (paused = player.paused) ? player.play() : player.pause();
+      bars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
+    };
+    
+    music.addEventListener('click', Hollywood.mute, false);
+  }
   
   let current, previous, active, inactive, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
   
@@ -38,14 +57,6 @@ const Hollywood = (options) => {
     inactive && (inactive.style.opacity = gloom);
   };
   
-  Hollywood.mute = () => {
-    let paused;
-    (paused = player.paused) ? player.play() : player.pause();
-    dancingBars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
-  };
-  
-  bars.addEventListener('click', Hollywood.mute, false);
-  
   W.addEventListener('resize', () => {
     AR = window.innerWidth / window.innerHeight;
     odd.className = even.className = '';
@@ -58,19 +69,20 @@ const Hollywood = (options) => {
       const imgs = result[0].map(i => {
         return {src: i.src, AR: i.width / i.height}
       });
-    
+      
       iterator = Circular(imgs);
-    
+      
       if (result[1]) {
         player = result[1];
         player.loop = true;
         player.play();
+        music.classList.remove('hollywood-hidden');
       }
-    
+      
+      loading && loadingBar.classList.add('hollywood-hidden');
+      
       move();
       interval = W.setInterval(move, stay * 1000);
-      bars.classList.remove('hollywood-hidden');
-      loading.classList.add('hollywood-hidden');
       resolve('Hollywood is ON!');
     }).catch((err) => {
       reject(`Sorry, can't able to load all resources. ${err}`);
