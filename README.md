@@ -1,5 +1,5 @@
 # Hollywood
 
-An awesome page background image rotator
+An awesome page background image rotator.
 
-[Documentation Pending]
+
