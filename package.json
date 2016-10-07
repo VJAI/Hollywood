@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/VJAI/Hollywood#readme",
   "devDependencies": {
+    "autoprefixer": "^6.5.0",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.16.0",
     "babel-loader": "^6.2.5",
@@ -28,6 +29,7 @@
     "html-webpack-plugin": "^2.22.0",
     "node-sass": "^3.10.1",
     "opener": "^1.4.2",
+    "postcss-loader": "^0.13.0",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
