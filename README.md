@@ -36,6 +36,23 @@ Note, you don't have to worry about pre-loading the images and audio, Hollywood 
 
 `transit` - The transition duration between images. The default value is 3 seconds.
 
+## Methods
+
+`Hollywood.mute()` - To mute the audio programatically.
+
+`Hollywood.destroy()` - To destroy it.
+
+## Other Considerations
+
+Hollywood uses fixed positioning and positioned at z-index of 1. You can flow your website content over it by wrapping the complete content in a container and setting it's position as `relative` and z-index to 2 or greater.
+
+```html
+.body-container {
+  position: relative;
+  z-index: 2;
+}
+```
+
 ## License
 
 MIT

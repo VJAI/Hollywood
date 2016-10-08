@@ -2,14 +2,17 @@ import './hollywood.scss';
 
 const [W, D, B, P] = [window, document, document.body, Promise];
 
+let state = 'OFF';
+
 const Hollywood = (options) => {
+  if (state !== 'OFF') return;
+  
   const {images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options};
-  console.log(loading);
   const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
   
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  [odd, even].map(img => {
+  [odd, even].forEach(img => {
     woods.appendChild(img);
     img.style.transition = `opacity ${transit}s ease-in`;
   });
@@ -26,7 +29,7 @@ const Hollywood = (options) => {
   if (audio) {
     music = D.createElement('div');
     music.classList.add('hollywood-bars', 'hollywood-hidden');
-    [...Array(5)].map(i => {
+    [...Array(5)].forEach(i => {
       let bar = D.createElement('div');
       bars.push(bar);
       music.appendChild(bar);
@@ -34,6 +37,7 @@ const Hollywood = (options) => {
     B.appendChild(music);
     
     Hollywood.mute = () => {
+      if (state !== 'ON') return;
       let paused;
       (paused = player.paused) ? player.play() : player.pause();
       bars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
@@ -57,12 +61,27 @@ const Hollywood = (options) => {
     inactive && (inactive.style.opacity = gloom);
   };
   
-  W.addEventListener('resize', () => {
+  const resize = () => {
     AR = window.innerWidth / window.innerHeight;
     odd.className = even.className = '';
     active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
     inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
-  }, false);
+  };
+  
+  W.addEventListener('resize', resize, false);
+  
+  Hollywood.destroy = function () {
+    state = 'OFF';
+    
+    W.removeEventListener('resize', resize, false);
+    
+    if (player) {
+      player.pause();
+      player.src = null;
+    }
+    
+    [woods, music, loadingBar].forEach(x => x && B.removeChild(x));
+  };
   
   return new P((resolve, reject) => {
     Preload(images, audio).then((result) => {
@@ -82,6 +101,7 @@ const Hollywood = (options) => {
       loading && loadingBar.classList.add('hollywood-hidden');
       
       move();
+      state = 'ON';
       interval = W.setInterval(move, stay * 1000);
       resolve('Hollywood is ON!');
     }).catch((err) => {

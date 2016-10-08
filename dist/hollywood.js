@@ -89,7 +89,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var P = _ref[3];
 
 
+	var state = 'OFF';
+
 	var Hollywood = function Hollywood(options) {
+	  if (state !== 'OFF') return;
+
 	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
 
 	  var images = _stay$transit$loading.images;
@@ -97,8 +101,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var loading = _stay$transit$loading.loading;
 	  var stay = _stay$transit$loading.stay;
 	  var transit = _stay$transit$loading.transit;
-
-	  console.log(loading);
 
 	  var _map = ['div', 'img', 'img'].map(function (e) {
 	    return D.createElement(e);
@@ -113,7 +115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  B.classList.add('hollywood-on');
 	  woods.classList.add('hollywood');
-	  [odd, even].map(function (img) {
+	  [odd, even].forEach(function (img) {
 	    woods.appendChild(img);
 	    img.style.transition = 'opacity ' + transit + 's ease-in';
 	  });
@@ -132,7 +134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (audio) {
 	    music = D.createElement('div');
 	    music.classList.add('hollywood-bars', 'hollywood-hidden');
-	    [].concat(_toConsumableArray(Array(5))).map(function (i) {
+	    [].concat(_toConsumableArray(Array(5))).forEach(function (i) {
 	      var bar = D.createElement('div');
 	      bars.push(bar);
 	      music.appendChild(bar);
@@ -140,6 +142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    B.appendChild(music);
 
 	    Hollywood.mute = function () {
+	      if (state !== 'ON') return;
 	      var paused = void 0;
 	      (paused = player.paused) ? player.play() : player.pause();
 	      bars.map(function (bar) {
@@ -174,12 +177,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    inactive && (inactive.style.opacity = gloom);
 	  };
 
-	  W.addEventListener('resize', function () {
+	  var resize = function resize() {
 	    AR = window.innerWidth / window.innerHeight;
 	    odd.className = even.className = '';
 	    active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
 	    inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
-	  }, false);
+	  };
+
+	  W.addEventListener('resize', resize, false);
+
+	  Hollywood.destroy = function () {
+	    state = 'OFF';
+
+	    W.removeEventListener('resize', resize, false);
+
+	    if (player) {
+	      player.pause();
+	      player.src = null;
+	    }
+
+	    [woods, music, loadingBar].forEach(function (x) {
+	      return x && B.removeChild(x);
+	    });
+	  };
 
 	  return new P(function (resolve, reject) {
 	    Preload(images, audio).then(function (result) {
@@ -199,6 +219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      loading && loadingBar.classList.add('hollywood-hidden');
 
 	      move();
+	      state = 'ON';
 	      interval = W.setInterval(move, stay * 1000);
 	      resolve('Hollywood is ON!');
 	    }).catch(function (err) {
