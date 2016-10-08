@@ -6,6 +6,7 @@ let state = 'OFF';
 
 const Hollywood = (options) => {
   if (state !== 'OFF') return;
+  state = 'ON';
   
   const {images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options};
   const [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
@@ -37,7 +38,7 @@ const Hollywood = (options) => {
     B.appendChild(music);
     
     Hollywood.mute = () => {
-      if (state !== 'ON') return;
+      if (state === 'OFF') return;
       let paused;
       (paused = player.paused) ? player.play() : player.pause();
       bars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
@@ -71,13 +72,14 @@ const Hollywood = (options) => {
   W.addEventListener('resize', resize, false);
   
   Hollywood.destroy = function () {
+    if(state === 'OFF') return;
     state = 'OFF';
     
     W.removeEventListener('resize', resize, false);
     
     if (player) {
       player.pause();
-      player.src = null;
+      player = null;
     }
     
     [woods, music, loadingBar].forEach(x => x && B.removeChild(x));
