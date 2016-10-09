@@ -1,8 +1,8 @@
 # Hollywood
 
-Isn't it boring to always stare at the same static background image of a website? Well, "Hollywood" is here to get rid of that boredom! It's a simple stand-alone library that periodically changes the background image of the image with a cool animation. It also can play a nice audio in the background to immerse the user into your website!
+Isn't it boring to always stare at the same background image of a website? Well, "Hollywood" is here to get rid of that boredom! It's a simple stand-alone library that periodically changes the background image of a website with a cool animation. It also can play a nice audio in the background to immerse the user into your website!
 
-[Please Check the Demo](http://prideparrot.com/demos/hollywood/index.html)!
+[Please check the DEMO](http://prideparrot.com/demos/hollywood/index.html)!
 
 ## Installation
 
@@ -16,7 +16,7 @@ or you can copy the files directly from the `dist` folder and include in your pr
 
 ## Usage
 
-You can trigger the show by simply calling the `Hollywood` function passing the URLs of images and an audio (optional).
+You can trigger the show by simply calling the `Hollywood` function passing an array of URLs of images and an audio optionally.
 
 ```javascript
 Hollywood({ images: ['bg1.jpg', 'bg2.jpg', 'bg3.jpg', 'bg4.jpg', 'bg5.jpg'], audio: 'audio.mp3' });
