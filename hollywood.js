@@ -1,8 +1,8 @@
 import './hollywood.scss';
 
-const [W, D, B, P] = [window, document, document.body, Promise];
-
 let state = 'OFF';
+
+const [W, D, B, P] = [window, document, document.body, Promise];
 
 const Hollywood = (options) => {
   if (state !== 'OFF') return;
@@ -13,20 +13,17 @@ const Hollywood = (options) => {
   
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
-  [odd, even].forEach(img => {
-    woods.appendChild(img);
-    img.style.transition = `opacity ${transit}s ease-in`;
-  });
+  [odd, even].forEach(img => { woods.appendChild(img); img.style.transition = `opacity ${transit}s ease-in`; });
   B.appendChild(woods);
   
-  let loadingBar, music, bars = [];
-  
+  let loadingBar;
   if (loading) {
     loadingBar = D.createElement('div');
     loadingBar.classList.add('hollywood-loading');
     B.appendChild(loadingBar);
   }
   
+  let music, bars = [];
   if (audio) {
     music = D.createElement('div');
     music.classList.add('hollywood-bars', 'hollywood-hidden');
@@ -48,7 +45,7 @@ const Hollywood = (options) => {
   }
   
   let current, previous, active, inactive, AR = window.innerWidth / window.innerHeight, iterator, player, interval, gloom = 0, glow = 0.5;
-  
+ 
   const move = () => {
     previous = current;
     current = iterator.next();
@@ -68,7 +65,6 @@ const Hollywood = (options) => {
     active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
     inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
   };
-  
   W.addEventListener('resize', resize, false);
   
   Hollywood.destroy = function () {
