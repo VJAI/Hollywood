@@ -55,11 +55,10 @@ $bgColor: #000;
   cursor: pointer;
   z-index: 100;
 
-  div {
+  .hollywood-bars-bar {
     width: 3px;
     height: 40%;
     background: #666;
-    animation: dance 300ms linear infinite alternate;
 
     $delays: 5ms, 50ms, 300ms, 200ms, 80ms;
     @each $delay in $delays {
@@ -69,6 +68,10 @@ $bgColor: #000;
         animation-delay: $delay;
       }
     }
+  }
+
+  .dancing-bars {
+    animation: dance 300ms linear infinite alternate;
   }
 
   @keyframes dance {

@@ -82,6 +82,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+	var state = 'OFF';
+
 	var _ref = [window, document, document.body, Promise];
 	var W = _ref[0];
 	var D = _ref[1];
@@ -89,10 +91,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var P = _ref[3];
 
 
-	var state = 'OFF';
-
 	var Hollywood = function Hollywood(options) {
 	  if (state !== 'OFF') return;
+	  state = 'ON';
 
 	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
 
@@ -116,37 +117,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	  B.classList.add('hollywood-on');
 	  woods.classList.add('hollywood');
 	  [odd, even].forEach(function (img) {
-	    woods.appendChild(img);
-	    img.style.transition = 'opacity ' + transit + 's ease-in';
+	    woods.appendChild(img);img.style.transition = 'opacity ' + transit + 's ease-in';
 	  });
 	  B.appendChild(woods);
 
-	  var loadingBar = void 0,
-	      music = void 0,
-	      bars = [];
-
+	  var loadingBar = void 0;
 	  if (loading) {
 	    loadingBar = D.createElement('div');
 	    loadingBar.classList.add('hollywood-loading');
 	    B.appendChild(loadingBar);
 	  }
 
+	  var music = void 0,
+	      bars = [];
 	  if (audio) {
 	    music = D.createElement('div');
 	    music.classList.add('hollywood-bars', 'hollywood-hidden');
 	    [].concat(_toConsumableArray(Array(5))).forEach(function (i) {
 	      var bar = D.createElement('div');
+	      bar.classList.add('hollywood-bars-bar', 'dancing-bars');
 	      bars.push(bar);
 	      music.appendChild(bar);
 	    });
 	    B.appendChild(music);
 
 	    Hollywood.mute = function () {
-	      if (state !== 'ON') return;
-	      var paused = void 0;
-	      (paused = player.paused) ? player.play() : player.pause();
+	      if (state === 'OFF') return;
+	      player.muted = !player.muted;
 	      bars.map(function (bar) {
-	        return bar.style.animationPlayState = paused ? 'running' : 'paused';
+	        return bar.classList[player.muted ? 'remove' : 'add']('dancing-bars');
 	      });
 	    };
 
@@ -183,17 +182,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
 	    inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
 	  };
-
 	  W.addEventListener('resize', resize, false);
 
 	  Hollywood.destroy = function () {
+	    if (state === 'OFF') return;
 	    state = 'OFF';
 
 	    W.removeEventListener('resize', resize, false);
 
 	    if (player) {
 	      player.pause();
-	      player.src = null;
+	      player = null;
 	    }
 
 	    [woods, music, loadingBar].forEach(function (x) {
@@ -308,7 +307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 1; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n\n.hollywood-bars {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  max-width: 20px;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-align: end;\n      align-items: flex-end;\n  cursor: pointer;\n  z-index: 100; }\n  .hollywood-bars div {\n    width: 3px;\n    height: 40%;\n    background: #666;\n    animation: dance 300ms linear infinite alternate; }\n    .hollywood-bars div:nth-child(1) {\n      animation-delay: 5ms; }\n    .hollywood-bars div:nth-child(2) {\n      animation-delay: 50ms; }\n    .hollywood-bars div:nth-child(3) {\n      animation-delay: 300ms; }\n    .hollywood-bars div:nth-child(4) {\n      animation-delay: 200ms; }\n    .hollywood-bars div:nth-child(5) {\n      animation-delay: 80ms; }\n\n@keyframes dance {\n  0% {\n    height: 40%; }\n  100% {\n    height: 100%; } }\n\n.hollywood-loading {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  border: 3px solid #666;\n  border-right-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  animation: rotate 750ms infinite linear;\n  z-index: 100; }\n\n@keyframes rotate {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(360deg); } }\n\n.hollywood-hidden {\n  display: none; }\n", ""]);
+	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 1; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n\n.hollywood-bars {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  max-width: 20px;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-align: end;\n      align-items: flex-end;\n  cursor: pointer;\n  z-index: 100; }\n  .hollywood-bars .hollywood-bars-bar {\n    width: 3px;\n    height: 40%;\n    background: #666; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(1) {\n      animation-delay: 5ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(2) {\n      animation-delay: 50ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(3) {\n      animation-delay: 300ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(4) {\n      animation-delay: 200ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(5) {\n      animation-delay: 80ms; }\n  .hollywood-bars .dancing-bars {\n    animation: dance 300ms linear infinite alternate; }\n\n@keyframes dance {\n  0% {\n    height: 40%; }\n  100% {\n    height: 100%; } }\n\n.hollywood-loading {\n  position: fixed;\n  bottom: 10px;\n  right: 10px;\n  height: 20px;\n  width: 20px;\n  border: 3px solid #666;\n  border-right-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  animation: rotate 750ms infinite linear;\n  z-index: 100; }\n\n@keyframes rotate {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(360deg); } }\n\n.hollywood-hidden {\n  display: none; }\n", ""]);
 
 	// exports
 

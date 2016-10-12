@@ -29,6 +29,7 @@ const Hollywood = (options) => {
     music.classList.add('hollywood-bars', 'hollywood-hidden');
     [...Array(5)].forEach(i => {
       let bar = D.createElement('div');
+      bar.classList.add('hollywood-bars-bar', 'dancing-bars');
       bars.push(bar);
       music.appendChild(bar);
     });
@@ -36,9 +37,8 @@ const Hollywood = (options) => {
     
     Hollywood.mute = () => {
       if (state === 'OFF') return;
-      let paused;
-      (paused = player.paused) ? player.play() : player.pause();
-      bars.map(bar => bar.style.animationPlayState = paused ? 'running' : 'paused');
+      player.muted = !player.muted;
+      bars.map(bar => bar.classList[player.muted ? 'remove' : 'add']('dancing-bars'));
     };
     
     music.addEventListener('click', Hollywood.mute, false);
