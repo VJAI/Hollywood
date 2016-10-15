@@ -82,8 +82,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-	var state = 'OFF';
-
 	var _ref = [window, document, document.body, Promise];
 	var W = _ref[0];
 	var D = _ref[1];
@@ -91,17 +89,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	var P = _ref[3];
 
 
+	var state = void 0,
+	    // current state
+	images = void 0,
+	    // array of image urls
+	audio = void 0,
+	    // audio url
+	player = void 0,
+	    // HTML5 Audio object
+	loading = void 0,
+	    // built-in loading required or not?
+	loadingBar = void 0,
+	    // loading-bar element
+	music = void 0,
+	    // music element
+	bars = [],
+	    // array of bars elements
+	stay = void 0,
+	    // stay duration
+	transit = void 0,
+	    // transit duration
+	woods = void 0,
+	    // main hollywood element
+	odd = void 0,
+	    // image element
+	even = void 0,
+	    // image element
+	current = void 0,
+	    // current active image
+	previous = void 0,
+	    // previous active image
+	active = void 0,
+	    // active image element
+	inactive = void 0,
+	    // inactive image element
+	AR = void 0,
+	    // window aspect ratio
+	iterator = void 0,
+	    // circular array iterator
+	interval = void 0,
+	    // interval id
+	gloom = void 0,
+	    // lowest opacity
+	glow = void 0; // highest opacity
+
+	// On window resize reset the dimensions of images
+	var resize = function resize() {
+	  AR = window.innerWidth / window.innerHeight;
+	  odd.className = even.className = '';
+	  active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
+	  inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
+	};
+
+	// Function that change the image periodically
+	var move = function move() {
+	  previous = current;
+	  current = iterator.next();
+	  inactive = active;
+	  active = active === even ? odd : even;
+
+	  active.src = current.src;
+	  active.style.opacity = glow;
+	  active.className = '';
+	  active.classList.add(AR > current.AR ? 'w100' : 'h100');
+	  inactive && (inactive.style.opacity = gloom);
+	};
+
+	// Hollywood initialization function.
 	var Hollywood = function Hollywood(options) {
-	  if (state !== 'OFF') return;
+	  if (state === 'ON') return;
 	  state = 'ON';
+	  AR = window.innerWidth / window.innerHeight;
+	  gloom = 0;
+	  glow = 0.5;
 
 	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
 
-	  var images = _stay$transit$loading.images;
-	  var audio = _stay$transit$loading.audio;
-	  var loading = _stay$transit$loading.loading;
-	  var stay = _stay$transit$loading.stay;
-	  var transit = _stay$transit$loading.transit;
+	  images = _stay$transit$loading.images;
+	  audio = _stay$transit$loading.audio;
+	  loading = _stay$transit$loading.loading;
+	  stay = _stay$transit$loading.stay;
+	  transit = _stay$transit$loading.transit;
 
 	  var _map = ['div', 'img', 'img'].map(function (e) {
 	    return D.createElement(e);
@@ -109,28 +177,28 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var _map2 = _slicedToArray(_map, 3);
 
-	  var woods = _map2[0];
-	  var odd = _map2[1];
-	  var even = _map2[2];
-
+	  woods = _map2[0];
+	  odd = _map2[1];
+	  even = _map2[2];
 
 	  B.classList.add('hollywood-on');
 	  woods.classList.add('hollywood');
 	  [odd, even].forEach(function (img) {
-	    woods.appendChild(img);img.style.transition = 'opacity ' + transit + 's ease-in';
+	    woods.appendChild(img);
+	    img.style.transition = 'opacity ' + transit + 's ease-in';
 	  });
 	  B.appendChild(woods);
 
-	  var loadingBar = void 0;
 	  if (loading) {
 	    loadingBar = D.createElement('div');
 	    loadingBar.classList.add('hollywood-loading');
 	    B.appendChild(loadingBar);
 	  }
 
-	  var music = void 0,
-	      bars = [];
 	  if (audio) {
+	    player = new Audio();
+	    player.loop = true;
+
 	    music = D.createElement('div');
 	    music.classList.add('hollywood-bars', 'hollywood-hidden');
 	    [].concat(_toConsumableArray(Array(5))).forEach(function (i) {
@@ -141,76 +209,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    B.appendChild(music);
 
-	    Hollywood.mute = function () {
-	      if (state === 'OFF') return;
-	      player.muted = !player.muted;
-	      bars.map(function (bar) {
-	        return bar.classList[player.muted ? 'remove' : 'add']('dancing-bars');
-	      });
-	    };
-
 	    music.addEventListener('click', Hollywood.mute, false);
 	  }
 
-	  var current = void 0,
-	      previous = void 0,
-	      active = void 0,
-	      inactive = void 0,
-	      AR = window.innerWidth / window.innerHeight,
-	      iterator = void 0,
-	      player = void 0,
-	      interval = void 0,
-	      gloom = 0,
-	      glow = 0.5;
-
-	  var move = function move() {
-	    previous = current;
-	    current = iterator.next();
-	    inactive = active;
-	    active = active === even ? odd : even;
-
-	    active.src = current.src;
-	    active.style.opacity = glow;
-	    active.className = '';
-	    active.classList.add(AR > current.AR ? 'w100' : 'h100');
-	    inactive && (inactive.style.opacity = gloom);
-	  };
-
-	  var resize = function resize() {
-	    AR = window.innerWidth / window.innerHeight;
-	    odd.className = even.className = '';
-	    active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
-	    inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
-	  };
 	  W.addEventListener('resize', resize, false);
 
-	  Hollywood.destroy = function () {
-	    if (state === 'OFF') return;
-	    state = 'OFF';
-
-	    W.removeEventListener('resize', resize, false);
-
-	    if (player) {
-	      player.pause();
-	      player = null;
-	    }
-
-	    [woods, music, loadingBar].forEach(function (x) {
-	      return x && B.removeChild(x);
-	    });
-	  };
-
 	  return new P(function (resolve, reject) {
-	    Preload(images, audio).then(function (result) {
-	      var imgs = result[0].map(function (i) {
-	        return { src: i.src, AR: i.width / i.height };
-	      });
+	    Preload(images, audio, player).then(function (result) {
+	      iterator = Circular(result[0]);
 
-	      iterator = Circular(imgs);
-
-	      if (result[1]) {
-	        player = result[1];
-	        player.loop = true;
+	      if (player) {
 	        player.play();
 	        music.classList.remove('hollywood-hidden');
 	      }
@@ -222,43 +230,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	      interval = W.setInterval(move, stay * 1000);
 	      resolve('Hollywood is ON!');
 	    }).catch(function (err) {
+	      loading && loadingBar.classList.add('hollywood-hidden');
 	      reject('Sorry, can\'t able to load all resources. ' + err);
 	    });
 	  });
 	};
 
-	var Preload = function Preload(images, audio) {
+	Hollywood.mute = function () {
+	  if (state === 'OFF' || !player) return;
+	  player.muted = !player.muted;
+	  bars.map(function (bar) {
+	    return bar.classList[player.muted ? 'remove' : 'add']('dancing-bars');
+	  });
+	};
+
+	Hollywood.destroy = function () {
+	  if (state === 'OFF') return;
+	  state = 'OFF';
+
+	  clearInterval(interval);
+	  W.removeEventListener('resize', resize, false);
+
+	  if (player) {
+	    player.pause();
+	    player = null;
+	  }
+
+	  [woods, music, loadingBar].forEach(function (x) {
+	    return x && B.removeChild(x);
+	  });
+	};
+
+	// A simple image and audio pre-loader.
+	var Preload = function Preload(images, audio, player) {
 	  var promises = [];
 
 	  promises.push(P.all(images.map(function (image) {
 	    return new Promise(function (resolve, reject) {
 	      var img = new Image();
-	      img.onload = function () {
-	        return resolve(img);
-	      };
-	      img.onerror = img.onabort = function () {
-	        return reject;
-	      };
+	      img.addEventListener('load', function () {
+	        return resolve({ src: img.src, AR: img.width / img.height });
+	      });
+	      img.addEventListener('error', reject);
 	      img.src = image;
 	    });
 	  })));
 
 	  if (audio) {
 	    promises.push(new P(function (resolve, reject) {
-	      var aud = new Audio();
-	      aud.oncanplaythrough = function () {
-	        return resolve(aud);
+	      var onCanPlayThrough = function onCanPlayThrough() {
+	        player.removeEventListener('canplaythrough', onCanPlayThrough);
+	        resolve();
 	      };
-	      aud.onerror = aud.onabort = function (e) {
-	        return reject;
-	      };
-	      aud.src = audio;
+	      player.addEventListener('canplaythrough', onCanPlayThrough);
+	      player.addEventListener('error', reject);
+	      player.src = audio;
 	    }));
 	  }
 
 	  return P.all(promises);
 	};
 
+	// A custom iterator that iterates arrays in a circular fashion.
 	var Circular = function Circular(arr) {
 	  var current = -1;
 
