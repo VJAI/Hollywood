@@ -74,33 +74,30 @@ const Hollywood = (options) => {
   if (audio) {
     player = new Audio();
     player.loop = true;
-    
-    music = D.createElement('div');
-    music.classList.add('hollywood-bars', 'hollywood-hidden');
-    [...Array(5)].forEach(i => {
-      let bar = D.createElement('div');
-      bar.classList.add('hollywood-bars-bar', 'dancing-bars');
-      bars.push(bar);
-      music.appendChild(bar);
-    });
-    B.appendChild(music);
-    
-    music.addEventListener('click', Hollywood.mute, false);
   }
   
   W.addEventListener('resize', resize, false);
   
   return new P((resolve, reject) => {
     Preload(images, audio, player)
-      .then((result) => {
+      .then(result => {
+        loading && B.removeChild(loadingBar);
         iterator = Circular(result[0]);
         
         if (player) {
           player.play();
-          music.classList.remove('hollywood-hidden');
+          music = D.createElement('div');
+          music.classList.add('hollywood-bars');
+          [...Array(5)].forEach(i => {
+            let bar = D.createElement('div');
+            bar.classList.add('hollywood-bars-bar');
+            bars.push(bar);
+            music.appendChild(bar);
+          });
+          B.appendChild(music);
+          bars.forEach(bar => bar.classList.add('dancing-bars'));
+          music.addEventListener('click', Hollywood.mute, false);
         }
-        
-        loading && loadingBar.classList.add('hollywood-hidden')
         
         move();
         state = 'ON';
@@ -108,7 +105,7 @@ const Hollywood = (options) => {
         resolve('Hollywood is ON!');
       })
       .catch((err) => {
-        loading && loadingBar.classList.add('hollywood-hidden')
+        loading && B.removeChild(loadingBar);
         reject(`Sorry, can't able to load all resources. ${err}`);
       });
   });

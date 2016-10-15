@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import Hollywood from './hollywood';
 
 const pics = [...Array(8).keys()].map(x => `rez/pic${x + 1}.jpg`);
