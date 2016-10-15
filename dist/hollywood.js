@@ -8258,38 +8258,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // interval id
 	gloom = void 0,
 	    // lowest opacity
-	glow = void 0; // highest opacity
-
-	// On window resize reset the dimensions of images
-	var resize = function resize() {
-	  AR = window.innerWidth / window.innerHeight;
-	  odd.className = even.className = '';
-	  active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
-	  inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
-	};
-
-	// Function that change the image periodically
-	var move = function move() {
-	  previous = current;
-	  current = iterator.next();
-	  inactive = active;
-	  active = active === even ? odd : even;
-
-	  active.src = current.src;
-	  active.style.opacity = glow;
-	  active.className = '';
-	  active.classList.add(AR > current.AR ? 'w100' : 'h100');
-	  inactive && (inactive.style.opacity = gloom);
-	};
+	glow = void 0,
+	    // highest opacity
+	empty = '';
 
 	// Hollywood initialization function.
 	var Hollywood = function Hollywood(options) {
 	  if (state === 'ON') return;
+
 	  state = 'ON';
 	  AR = window.innerWidth / window.innerHeight;
 	  gloom = 0;
 	  glow = 0.5;
 
+	  // store the options in variables
+
+	  // render the basic elements.
 	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
 
 	  images = _stay$transit$loading.images;
@@ -8316,24 +8300,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	  B.appendChild(woods);
 
+	  // if loading bar needed render the element.
 	  if (loading) {
 	    loadingBar = D.createElement('div');
 	    loadingBar.classList.add('hollywood-loading');
 	    B.appendChild(loadingBar);
 	  }
 
+	  // if audio available create the player but we render the element later.
 	  if (audio) {
 	    player = new Audio();
 	    player.loop = true;
 	  }
 
-	  W.addEventListener('resize', resize, false);
+	  W.addEventListener('resize', resize);
 
 	  return new P(function (resolve, reject) {
 	    Preload(images, audio, player).then(function (result) {
-	      loading && B.removeChild(loadingBar);
+	      // create the iterator
 	      iterator = Circular(result[0]);
 
+	      // if player exist play the audio and render the music element.
 	      if (player) {
 	        player.play();
 	        music = D.createElement('div');
@@ -8348,20 +8335,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	        bars.forEach(function (bar) {
 	          return bar.classList.add('dancing-bars');
 	        });
-	        music.addEventListener('click', Hollywood.mute, false);
+	        music.addEventListener('click', Hollywood.mute);
 	      }
 
-	      move();
 	      state = 'ON';
+	      move();
 	      interval = W.setInterval(move, stay * 1000);
 	      resolve('Hollywood is ON!');
 	    }).catch(function (err) {
-	      loading && loadingBar.classList.add('hollywood-hidden');
+	      loading && B.removeChild(loadingBar);
 	      reject('Sorry, can\'t able to load all resources. ' + err);
+	    }).then(function () {
+	      return loading && B.removeChild(loadingBar);
 	    });
 	  });
 	};
 
+	// Function that change the image periodically
+	var move = function move() {
+	  var _ref2 = [current, iterator.next()];
+	  previous = _ref2[0];
+	  current = _ref2[1];
+	  var _ref3 = [active, active === even ? odd : even];
+	  inactive = _ref3[0];
+	  active = _ref3[1];
+
+
+	  active.src = current.src;
+	  active.style.opacity = glow;
+	  active.className = empty;
+	  active.classList.add(AR > current.AR ? 'w100' : 'h100');
+	  inactive && (inactive.style.opacity = gloom);
+	};
+
+	// On window resize reset the dimensions of images
+	var resize = function resize() {
+	  AR = window.innerWidth / window.innerHeight;
+	  odd.className = even.className = empty;
+	  active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
+	  inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
+	};
+
+	// public functions
 	Hollywood.mute = function () {
 	  if (state === 'OFF' || !player) return;
 	  player.muted = !player.muted;
@@ -8373,15 +8388,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	Hollywood.destroy = function () {
 	  if (state === 'OFF') return;
 	  state = 'OFF';
-
 	  clearInterval(interval);
-	  W.removeEventListener('resize', resize, false);
-
-	  if (player) {
-	    player.pause();
-	    player = null;
-	  }
-
+	  W.removeEventListener('resize', resize);
+	  player = player && player.pause();
 	  [woods, music, loadingBar].forEach(function (x) {
 	    return x && B.removeChild(x);
 	  });

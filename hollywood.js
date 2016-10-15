@@ -23,39 +23,22 @@ let state,      // current state
   iterator,     // circular array iterator
   interval,     // interval id
   gloom,        // lowest opacity
-  glow;         // highest opacity
-
-// On window resize reset the dimensions of images
-const resize = () => {
-  AR = window.innerWidth / window.innerHeight;
-  odd.className = even.className = '';
-  active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
-  inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
-};
-
-// Function that change the image periodically
-const move = () => {
-  previous = current;
-  current = iterator.next();
-  inactive = active;
-  active = active === even ? odd : even;
-  
-  active.src = current.src;
-  active.style.opacity = glow;
-  active.className = '';
-  active.classList.add(AR > current.AR ? 'w100' : 'h100');
-  inactive && (inactive.style.opacity = gloom);
-};
+  glow,        // highest opacity
+  empty = '';
 
 // Hollywood initialization function.
 const Hollywood = (options) => {
   if (state === 'ON') return;
+  
   state = 'ON';
   AR = window.innerWidth / window.innerHeight;
   gloom = 0;
   glow = 0.5;
   
+  // store the options in variables
   ({images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options});
+  
+  // render the basic elements.
   [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
   B.classList.add('hollywood-on');
   woods.classList.add('hollywood');
@@ -65,25 +48,28 @@ const Hollywood = (options) => {
   });
   B.appendChild(woods);
   
+  // if loading bar needed render the element.
   if (loading) {
     loadingBar = D.createElement('div');
     loadingBar.classList.add('hollywood-loading');
     B.appendChild(loadingBar);
   }
   
+  // if audio available create the player but we render the element later.
   if (audio) {
     player = new Audio();
     player.loop = true;
   }
   
-  W.addEventListener('resize', resize, false);
+  W.addEventListener('resize', resize);
   
   return new P((resolve, reject) => {
     Preload(images, audio, player)
       .then(result => {
-        loading && B.removeChild(loadingBar);
+        // create the iterator
         iterator = Circular(result[0]);
         
+        // if player exist play the audio and render the music element.
         if (player) {
           player.play();
           music = D.createElement('div');
@@ -96,21 +82,43 @@ const Hollywood = (options) => {
           });
           B.appendChild(music);
           bars.forEach(bar => bar.classList.add('dancing-bars'));
-          music.addEventListener('click', Hollywood.mute, false);
+          music.addEventListener('click', Hollywood.mute);
         }
-        
-        move();
+  
         state = 'ON';
+        move();
         interval = W.setInterval(move, stay * 1000);
         resolve('Hollywood is ON!');
       })
       .catch((err) => {
         loading && B.removeChild(loadingBar);
         reject(`Sorry, can't able to load all resources. ${err}`);
-      });
+      })
+      .then(() => loading && B.removeChild(loadingBar));
   });
 };
 
+// Function that change the image periodically
+const move = () => {
+  [previous, current] = [current, iterator.next()];
+  [inactive, active] = [active, active === even ? odd : even];
+  
+  active.src = current.src;
+  active.style.opacity = glow;
+  active.className = empty;
+  active.classList.add(AR > current.AR ? 'w100' : 'h100');
+  inactive && (inactive.style.opacity = gloom);
+};
+
+// On window resize reset the dimensions of images
+const resize = () => {
+  AR = window.innerWidth / window.innerHeight;
+  odd.className = even.className = empty;
+  active && active.classList.add(AR > current.AR ? 'w100' : 'h100');
+  inactive && inactive.classList.add(AR > previous.AR ? 'w100' : 'h100');
+};
+
+// public functions
 Hollywood.mute = () => {
   if (state === 'OFF' || !player) return;
   player.muted = !player.muted;
@@ -120,15 +128,9 @@ Hollywood.mute = () => {
 Hollywood.destroy = function () {
   if (state === 'OFF') return;
   state = 'OFF';
-  
   clearInterval(interval);
-  W.removeEventListener('resize', resize, false);
-  
-  if (player) {
-    player.pause();
-    player = null;
-  }
-  
+  W.removeEventListener('resize', resize);
+  player = player && player.pause();
   [woods, music, loadingBar].forEach(x => x && B.removeChild(x));
 };
 
@@ -138,7 +140,7 @@ const Preload = (images, audio, player) => {
   
   promises.push(P.all(images.map(image => {
     return new Promise((resolve, reject) => {
-      const img = new Image;
+      const img = new Image();
       img.addEventListener('load', () => resolve({src: img.src, AR: img.width / img.height}));
       img.addEventListener('error', reject);
       img.src = image;
