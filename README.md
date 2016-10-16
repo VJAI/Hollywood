@@ -42,6 +42,14 @@ Note, you don't have to worry about pre-loading the images and audio, Hollywood 
 
 `Hollywood.destroy()` - To destroy it.
 
+## Supported Browsers
+
+* Chrome
+* Firefox
+* Safari
+* Edge
+* IE11 and IE10
+
 ## Other Considerations
 
 Hollywood uses fixed positioning and positioned at z-index of 1. You can flow your website content over it by wrapping the complete content in a container and setting it's position as `relative` and z-index to 2 or greater.

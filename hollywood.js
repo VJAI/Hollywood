@@ -11,7 +11,8 @@ let state,      // current state
   music,        // music element
   bars = [],    // array of bars elements
   stay,         // stay duration
-  transit,      // transit duration
+  transit,      // transit duration,
+  delay,        // initial duration
   woods,        // main hollywood element
   odd,          // image element
   even,         // image element
@@ -34,6 +35,7 @@ const Hollywood = (options) => {
   AR = window.innerWidth / window.innerHeight;
   gloom = 0;
   glow = 0.5;
+  delay = 2;
   
   // store the options in variables
   ({images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options});
@@ -69,6 +71,13 @@ const Hollywood = (options) => {
         // create the iterator
         iterator = Circular(result[0]);
         
+        const triggerMotion = () => {
+          state = 'ON';
+          move();
+          interval = W.setInterval(move, stay * 1000);
+          resolve('Hollywood is ON!');
+        };
+        
         // if player exist play the audio and render the music element.
         if (player) {
           player.play();
@@ -83,12 +92,10 @@ const Hollywood = (options) => {
           B.appendChild(music);
           bars.forEach(bar => bar.classList.add('dancing-bars'));
           music.addEventListener('click', Hollywood.mute);
+          return setTimeout(triggerMotion, delay * 1000);
         }
   
-        state = 'ON';
-        move();
-        interval = W.setInterval(move, stay * 1000);
-        resolve('Hollywood is ON!');
+        triggerMotion();
       })
       .catch((err) => {
         loading && B.removeChild(loadingBar);
