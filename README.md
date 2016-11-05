@@ -36,6 +36,10 @@ Note, you don't have to worry about pre-loading the images and audio, Hollywood 
 
 `transit` - The transition duration between images. The default value is 3 seconds.
 
+`volume` - The volume of the sound (0.0 - 1.0). The default value is 1.0.
+
+`glow` - The max opacity of the image. The default value is 0.5.
+
 ## Methods
 
 `Hollywood.mute()` - To mute the audio programatically.

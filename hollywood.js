@@ -5,6 +5,7 @@ const [W, D, B, P] = [window, document, document.body, Promise];
 let state,      // current state
   images,       // array of image urls
   audio,        // audio url
+  volume,       // volume of the player
   player,       // HTML5 Audio object
   loading,      // built-in loading required or not?
   loadingBar,   // loading-bar element
@@ -24,7 +25,7 @@ let state,      // current state
   iterator,     // circular array iterator
   interval,     // interval id
   gloom,        // lowest opacity
-  glow,        // highest opacity
+  glow,         // highest opacity
   empty = '';
 
 // Hollywood initialization function.
@@ -34,11 +35,10 @@ const Hollywood = (options) => {
   state = 'ON';
   AR = window.innerWidth / window.innerHeight;
   gloom = 0;
-  glow = 0.5;
   delay = 2;
   
   // store the options in variables
-  ({images, audio, loading, stay, transit} = {...{stay: 10, transit: 3, loading: true}, ...options});
+  ({images, audio, loading, stay, transit, volume, glow} = {...{stay: 10, transit: 3, volume: 1, glow: 0.5, loading: true}, ...options});
   
   // render the basic elements.
   [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
@@ -60,6 +60,7 @@ const Hollywood = (options) => {
   // if audio available create the player but we render the element later.
   if (audio) {
     player = new Audio();
+    player.volume = volume;
     player.loop = true;
   }
   
