@@ -42,7 +42,9 @@ Note, you don't have to worry about pre-loading the images and audio, Hollywood 
 
 ## Methods
 
-`Hollywood.mute()` - To mute the audio programatically.
+`Hollywood.mute()` - Mute/un-mute the audio.
+
+`Hollywood.volume(volume)` - Change volume (0.0 - 1.0).
 
 `Hollywood.destroy()` - To destroy it.
 

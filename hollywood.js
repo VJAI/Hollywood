@@ -133,6 +133,11 @@ Hollywood.mute = () => {
   bars.map(bar => bar.classList[player.muted ? 'remove' : 'add']('dancing-bars'));
 };
 
+Hollywood.volume = (volume) => {
+  if(!player) return;
+  player.volume = volume;
+};
+
 Hollywood.destroy = function () {
   if (state === 'OFF') return;
   state = 'OFF';
