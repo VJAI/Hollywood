@@ -8222,6 +8222,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // array of image urls
 	audio = void 0,
 	    // audio url
+	volume = void 0,
+	    // volume of the player
 	player = void 0,
 	    // HTML5 Audio object
 	loading = void 0,
@@ -8235,7 +8237,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	stay = void 0,
 	    // stay duration
 	transit = void 0,
-	    // transit duration
+	    // transit duration,
+	delay = void 0,
+	    // initial duration
 	woods = void 0,
 	    // main hollywood element
 	odd = void 0,
@@ -8269,18 +8273,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  state = 'ON';
 	  AR = window.innerWidth / window.innerHeight;
 	  gloom = 0;
-	  glow = 0.5;
+	  delay = 2;
 
 	  // store the options in variables
 
 	  // render the basic elements.
-	  var _stay$transit$loading = _extends({ stay: 10, transit: 3, loading: true }, options);
+	  var _stay$transit$volume$ = _extends({ stay: 10, transit: 3, volume: 1, glow: 0.5, loading: true }, options);
 
-	  images = _stay$transit$loading.images;
-	  audio = _stay$transit$loading.audio;
-	  loading = _stay$transit$loading.loading;
-	  stay = _stay$transit$loading.stay;
-	  transit = _stay$transit$loading.transit;
+	  images = _stay$transit$volume$.images;
+	  audio = _stay$transit$volume$.audio;
+	  loading = _stay$transit$volume$.loading;
+	  stay = _stay$transit$volume$.stay;
+	  transit = _stay$transit$volume$.transit;
+	  volume = _stay$transit$volume$.volume;
+	  glow = _stay$transit$volume$.glow;
 
 	  var _map = ['div', 'img', 'img'].map(function (e) {
 	    return D.createElement(e);
@@ -8310,6 +8316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // if audio available create the player but we render the element later.
 	  if (audio) {
 	    player = new Audio();
+	    player.volume = volume;
 	    player.loop = true;
 	  }
 
@@ -8319,6 +8326,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Preload(images, audio, player).then(function (result) {
 	      // create the iterator
 	      iterator = Circular(result[0]);
+
+	      var triggerMotion = function triggerMotion() {
+	        state = 'ON';
+	        move();
+	        interval = W.setInterval(move, stay * 1000);
+	        resolve('Hollywood is ON!');
+	      };
 
 	      // if player exist play the audio and render the music element.
 	      if (player) {
@@ -8336,12 +8350,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          return bar.classList.add('dancing-bars');
 	        });
 	        music.addEventListener('click', Hollywood.mute);
+	        return setTimeout(triggerMotion, delay * 1000);
 	      }
 
-	      state = 'ON';
-	      move();
-	      interval = W.setInterval(move, stay * 1000);
-	      resolve('Hollywood is ON!');
+	      triggerMotion();
 	    }).catch(function (err) {
 	      loading && B.removeChild(loadingBar);
 	      reject('Sorry, can\'t able to load all resources. ' + err);
@@ -8383,6 +8395,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  bars.map(function (bar) {
 	    return bar.classList[player.muted ? 'remove' : 'add']('dancing-bars');
 	  });
+	};
+
+	Hollywood.volume = function (volume) {
+	  if (!player) return;
+	  player.volume = volume;
 	};
 
 	Hollywood.destroy = function () {
@@ -8475,7 +8492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 1; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n\n.hollywood-bars {\n  position: fixed;\n  bottom: 15px;\n  right: 15px;\n  height: 20px;\n  width: 20px;\n  max-width: 20px;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-align: end;\n      align-items: flex-end;\n  cursor: pointer;\n  z-index: 100; }\n  .hollywood-bars .hollywood-bars-bar {\n    width: 3px;\n    height: 40%;\n    background: #666; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(1) {\n      animation-delay: 5ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(2) {\n      animation-delay: 50ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(3) {\n      animation-delay: 300ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(4) {\n      animation-delay: 200ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(5) {\n      animation-delay: 80ms; }\n  .hollywood-bars .dancing-bars {\n    animation: dance 300ms linear infinite alternate; }\n\n@keyframes dance {\n  0% {\n    height: 40%; }\n  100% {\n    height: 100%; } }\n\n.hollywood-loading {\n  position: fixed;\n  bottom: 15px;\n  right: 15px;\n  height: 20px;\n  width: 20px;\n  border: 3px solid #666;\n  border-right-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  animation: rotate 750ms infinite linear;\n  z-index: 100; }\n\n@keyframes rotate {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(360deg); } }\n", ""]);
+	exports.push([module.id, ".hollywood-on {\n  margin: 0;\n  padding: 0;\n  background-color: #000; }\n\n.hollywood {\n  position: fixed;\n  overflow: hidden;\n  height: 100%;\n  width: 100%;\n  top: 0;\n  left: 0;\n  z-index: 1; }\n  .hollywood:after {\n    position: fixed;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    content: '';\n    background: transparent url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhJREFUeNpiYGBgePz//38GRhABAgABBgBFTAbfCBNE2AAAAABJRU5ErkJggg==\") repeat top left; }\n  .hollywood img {\n    position: absolute;\n    opacity: 0;\n    left: 50%;\n    top: 50%;\n    transform: translate(-50%, -50%); }\n  .hollywood .w100 {\n    width: 100%; }\n  .hollywood .h100 {\n    height: 100%; }\n\n.hollywood-bars {\n  position: fixed;\n  bottom: 25px;\n  right: 25px;\n  height: 20px;\n  width: 20px;\n  max-width: 20px;\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-align: end;\n      align-items: flex-end;\n  cursor: pointer;\n  z-index: 100; }\n  .hollywood-bars .hollywood-bars-bar {\n    width: 3px;\n    height: 40%;\n    background: #666; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(1) {\n      animation-delay: 5ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(2) {\n      animation-delay: 50ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(3) {\n      animation-delay: 300ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(4) {\n      animation-delay: 200ms; }\n    .hollywood-bars .hollywood-bars-bar:nth-child(5) {\n      animation-delay: 80ms; }\n  .hollywood-bars .dancing-bars {\n    animation: dance 300ms linear infinite alternate; }\n\n@keyframes dance {\n  0% {\n    height: 40%; }\n  100% {\n    height: 100%; } }\n\n.hollywood-loading {\n  position: fixed;\n  bottom: 25px;\n  right: 25px;\n  height: 20px;\n  width: 20px;\n  border: 3px solid #666;\n  border-right-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  animation: rotate 750ms infinite linear;\n  z-index: 100; }\n\n@keyframes rotate {\n  0% {\n    transform: rotate(0deg); }\n  100% {\n    transform: rotate(360deg); } }\n", ""]);
 
 	// exports
 
