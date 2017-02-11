@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/VJAI/Hollywood.git"
   },
-  "keywords": [],
+  "keywords": [
+    "image rotator",
+    "javascript"
+  ],
   "author": "Vijaya Anand",
   "license": "MIT",
   "bugs": {
