@@ -82,7 +82,6 @@ const Hollywood = (options) => {
         // if player exist play the audio and render the music element.
         if (player) {
           const playPromise = player.play();
-          playPromise && playPromise.catch(() => player.play());
           music = D.createElement('div');
           music.classList.add('hollywood-bars');
           [...Array(5)].forEach(i => {
