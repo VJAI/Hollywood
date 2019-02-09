@@ -31,15 +31,15 @@ let state,      // current state
 // Hollywood initialization function.
 const Hollywood = (options) => {
   if (state === 'ON') return;
-  
+
   state = 'ON';
   AR = window.innerWidth / window.innerHeight;
   gloom = 0;
   delay = 2;
-  
+
   // store the options in variables
   ({images, audio, loading, stay, transit, volume, glow} = {...{stay: 10, transit: 3, volume: 1, glow: 0.5, loading: true}, ...options});
-  
+
   // render the basic elements.
   [woods, odd, even] = ['div', 'img', 'img'].map(e => D.createElement(e));
   B.classList.add('hollywood-on');
@@ -49,39 +49,40 @@ const Hollywood = (options) => {
     img.style.transition = `opacity ${transit}s ease-in`;
   });
   B.appendChild(woods);
-  
+
   // if loading bar needed render the element.
   if (loading) {
     loadingBar = D.createElement('div');
     loadingBar.classList.add('hollywood-loading');
     B.appendChild(loadingBar);
   }
-  
+
   // if audio available create the player but we render the element later.
   if (audio) {
     player = new Audio();
     player.volume = volume;
     player.loop = true;
   }
-  
+
   W.addEventListener('resize', resize);
-  
+
   return new P((resolve, reject) => {
     Preload(images, audio, player)
       .then(result => {
         // create the iterator
         iterator = Circular(result[0]);
-        
+
         const triggerMotion = () => {
           state = 'ON';
           move();
           interval = W.setInterval(move, stay * 1000);
           resolve('Hollywood is ON!');
         };
-        
+
         // if player exist play the audio and render the music element.
         if (player) {
-          player.play();
+          const playPromise = player.play();
+          playPromise && playPromise.catch(() => player.play());
           music = D.createElement('div');
           music.classList.add('hollywood-bars');
           [...Array(5)].forEach(i => {
@@ -95,7 +96,7 @@ const Hollywood = (options) => {
           music.addEventListener('click', Hollywood.mute);
           return setTimeout(triggerMotion, delay * 1000);
         }
-  
+
         triggerMotion();
       })
       .catch((err) => {
@@ -110,7 +111,7 @@ const Hollywood = (options) => {
 const move = () => {
   [previous, current] = [current, iterator.next()];
   [inactive, active] = [active, active === even ? odd : even];
-  
+
   active.src = current.src;
   active.style.opacity = glow;
   active.className = empty;
@@ -150,7 +151,7 @@ Hollywood.destroy = function () {
 // A simple image and audio pre-loader.
 const Preload = (images, audio, player) => {
   const promises = [];
-  
+
   promises.push(P.all(images.map(image => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -159,7 +160,7 @@ const Preload = (images, audio, player) => {
       img.src = image;
     });
   })));
-  
+
   if (audio) {
     promises.push(new P((resolve, reject) => {
       const onCanPlayThrough = () => {
@@ -171,14 +172,14 @@ const Preload = (images, audio, player) => {
       player.src = audio;
     }));
   }
-  
+
   return P.all(promises);
 };
 
 // A custom iterator that iterates arrays in a circular fashion.
 const Circular = (arr) => {
   let current = -1;
-  
+
   return {
     next() {
       current = current >= arr.length - 1 ? 0 : current + 1;
